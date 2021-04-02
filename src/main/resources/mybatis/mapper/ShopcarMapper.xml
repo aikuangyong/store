@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ShopcarMapper">
+    <resultMap id="shopcarMap" type="com.store.model.ShopcarModel">
+        <id column="carid" property="carid" javaType="String"/>
+        <result column="productid" property="productid" javaType="String"/>
+        <result column="userid" property="userid" javaType="String"/>
+        <result column="productcount" property="productcount" javaType="Integer"/>
+        <result column="createtime" property="createtime" javaType="Date"/>
+    </resultMap>
+
+    <select id="getList" parameterType="shopcarModel" resultType="shopcarModel">
+        SELECT
+        carid,
+        productid,
+        userid,
+        productcount,
+        TBL.createtime,
+        vegetablename productname,
+        content,
+        imghref productimg,
+        price,
+        vt.valid
+        FROM
+        Shopcar tbl
+        INNER JOIN vegetable vt ON VT.VID = TBL.productid
+        INNER JOIN v_thum_img v_img ON v_img.imggrp = vt.vegetableimg
+        where 1=1
+        <if test="carid != '' and carid != null ">
+            and carid = #{carid}
+        </if>
+        <if test="productid != '' and productid != null ">
+            and productid = #{productid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and tbl.userid = #{userid}
+        </if>
+        <if test="productcount != '' and productcount != null ">
+            and productcount = #{productcount}
+        </if>
+        <if test="idList != null and idList.size() != 0 ">
+            and carid in
+            <foreach collection="idList" item="primaryKey" index="no" open="("
+                     separator="," close=")">
+                #{primaryKey}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getCount" parameterType="shopcarModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Shopcar
+        where 1=1
+        <if test="carid != '' and carid != null ">
+            and carid = #{carid}
+        </if>
+        <if test="productid != '' and productid != null ">
+            and productid = #{productid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="productcount != '' and productcount != null ">
+            and productcount = #{productcount}
+        </if>
+    </select>
+
+    <update id="update" parameterType="shopcarModel">
+        update Shopcar tbl
+        set carid = carid
+        <if test="productid != '' and productid != null ">
+            ,productid =#{productid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            ,userid =#{userid}
+        </if>
+        <if test="productcount != '' and productcount != null ">
+            ,productcount =#{productcount}
+        </if>
+        <if test=" createtime != null ">
+            ,createtime =#{createtime}
+        </if>
+        where carid = #{carid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="shopcarModel">
+        update Shopcar set valid = ${valid} where carid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="shopcarModel">
+        delete FROM Shopcar where
+        carid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByCondition" parameterType="shopcarModel">
+        delete FROM Shopcar
+        where userid = #{userid}
+        and (
+        productid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+        or
+        carid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+        )
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="carid" parameterType="shopcarModel">
+        <selectKey keyProperty="carid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Shopcar
+        (
+        carid,
+        productid,
+        userid,
+        productcount,
+        createtime
+        )
+        values
+        (
+        #{carid},
+        #{productid},
+        #{userid},
+        #{productcount},
+        #{createtime}
+        )
+    </insert>
+</mapper>

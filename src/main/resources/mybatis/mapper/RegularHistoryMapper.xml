@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RegularHistoryMapper">
+    <resultMap id="regularHistoryMap" type="com.store.model.RegularHistoryModel">
+        <id column="orderNo" property="orderno" javaType="String"/>
+        <result column="orderInfo" property="orderinfo" javaType="String"/>
+    </resultMap>
+
+    <select id="getList" parameterType="regularHistoryModel" resultType="regularHistoryModel">
+        SELECT
+        orderNo,
+        orderInfo
+        FROM
+        RegularHistory tbl
+        where 1=1
+        <if test="orderno != '' and orderno != null ">
+            and orderNo = #{orderno}
+        </if>
+        <if test="orderinfo != '' and orderinfo != null ">
+            and orderInfo = #{orderinfo}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="regularHistoryModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM RegularHistory
+        where 1=1
+        <if test="orderno != '' and orderno != null ">
+            and orderNo = #{orderno}
+        </if>
+        <if test="orderinfo != '' and orderinfo != null ">
+            and orderInfo = #{orderinfo}
+        </if>
+    </select>
+
+    <update id="update" parameterType="regularHistoryModel">
+        update RegularHistory tbl
+        set orderNo = orderNo
+        <if test="orderinfo != '' and orderinfo != null ">
+            ,orderInfo =#{orderinfo}
+        </if>
+        where orderNo = #{orderNo}
+    </update>
+
+    <update id="disableOrEnable" parameterType="regularHistoryModel">
+        update RegularHistory set valid = ${valid} where orderNo
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="regularHistoryModel">
+        delete FROM RegularHistory where
+        orderNo in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderno" parameterType="regularHistoryModel">
+        insert into RegularHistory
+        (
+            orderNo,
+            orderInfo
+        )
+        values
+        (
+            #{orderno},
+            #{orderinfo}
+        )
+    </insert>
+</mapper>

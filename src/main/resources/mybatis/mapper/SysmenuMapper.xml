@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SysmenuMapper">
+    <resultMap id="sysmenuMap" type="com.store.model.SysmenuModel">
+        <id column="menuid" property="menuid" javaType="String"/>
+        <result column="menuname" property="title" javaType="String"/>
+        <result column="menuicon" property="icon" javaType="String"/>
+        <result column="parentid" property="parentid" javaType="String"/>
+        <result column="url" property="href" javaType="String"/>
+    </resultMap>
+
+
+
+    <select id="getMenuByRole" parameterType="sysmenuModel" resultMap="sysmenuMap">
+        SELECT
+            tbl.menuid,
+            MENU.menuname,
+            MENU.menuicon,
+            MENU.parentid,
+            MENU.url,
+            roledetails
+		FROM Sysmenurole tbl
+		INNER JOIN SYSMENU MENU ON TBL.MENUID = MENU.MENUID
+		WHERE ROLEID = #{roleid} and roledetails = 1
+		order by MENU.orderseq
+    </select>
+
+    <select id="getList" parameterType="sysmenuModel" resultMap="sysmenuMap">
+        SELECT
+        menuid,
+        menuname,
+        menuicon,
+        parentid,
+        url
+        FROM
+        Sysmenu tbl
+        where 1=1
+        <if test="menuid != '' and menuid != null ">
+            and menuid = #{menuid}
+        </if>
+        <if test="title != '' and title != null ">
+            and menuname = #{title}
+        </if>
+        <if test="icon != '' and icon != null ">
+            and menuicon = #{icon}
+        </if>
+        <if test="parentid != '' and parentid != null ">
+            and parentid = #{parentid}
+        </if>
+        <if test="href != '' and href != null ">
+            and url = #{href}
+        </if>
+        order by orderseq
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="sysmenuModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Sysmenu
+        where 1=1
+        <if test="menuid != '' and menuid != null ">
+            and menuid = #{menuid}
+        </if>
+        <if test="title != '' and title != null ">
+            and menuname = #{title}
+        </if>
+        <if test="icon != '' and icon != null ">
+            and menuicon = #{icon}
+        </if>
+        <if test="parentid != '' and parentid != null ">
+            and parentid = #{parentid}
+        </if>
+        <if test="href != '' and href != null ">
+            and url = #{href}
+        </if>
+    </select>
+
+    <update id="update" parameterType="sysmenuModel">
+        update Sysmenu tbl
+        set 1=1
+        <if test="menuid != '' and menuid != null ">
+            ,menuid =#{menuid}
+        </if>
+        <if test="title != '' and title != null ">
+            ,menuname =#{title}
+        </if>
+        <if test="icon != '' and icon != null ">
+            ,menuicon =#{icon}
+        </if>
+        <if test="parentid != '' and parentid != null ">
+            ,parentid =#{parentid}
+        </if>
+        <if test="href != '' and href != null ">
+            ,url =#{href}
+        </if>
+    </update>
+
+    <update id="disableOrEnable" parameterType="sysmenuModel">
+        update Sysmenu set valid = ${valid} where menuid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="sysmenuModel">
+        delete FROM Sysmenu where
+        menuid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="menuid" parameterType="sysmenuModel">
+        insert into Sysmenu
+        (
+            menuid,
+            menuname,
+            menuicon,
+            parentid,
+            url
+        )
+        values
+        (
+            #{menuid},
+            #{title},
+            #{icon},
+            #{parentid},
+            #{href}
+        )
+    </insert>
+</mapper>

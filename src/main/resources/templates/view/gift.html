@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>领取记录</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+<div class="admin-main">
+
+
+    <div class="handle-box">
+        <ul>
+            <form action="" class="layui-form">
+                <li class="handle-item layui-clear">
+                    <div class="fl" style="float: left;">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label" style="width: auto;">领取人：</label>
+                                <div class="layui-input-inline" style="width: 120px;">
+                                    <input type="text" class="layui-input" placeholder="请输入领取人"  >
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label" style="width: auto;">用户：</label>
+                                <div class="layui-input-inline" style="width: 120px;">
+                                    <input type="text" class="layui-input" placeholder="请输入用户名"  >
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label" style="width: auto;">验证码：</label>
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <input type="text" class="layui-input" placeholder="验证码"  >
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label" style="width: auto;">领取时间：</label>
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" class="layui-input" placeholder=""  onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM-DD'})" >
+                                </div>
+                            </div>
+
+                            <button class="layui-btn" >查询</button>
+                        </div>
+                    </div>
+                </li>
+            </form>
+        </ul>
+    </div>
+
+
+    <table class="site-table table-hover">
+        <thead>
+        <tr>
+            <th>用户</th>
+            <th>联系电话</th>
+            <th>购买产品</th>
+            <th>验证码</th>
+            <th>领取人</th>
+            <th>领取时间</th>
+            <th>所属网点</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>李东神</td>
+            <td>13562547857</td>
+            <td>收费套餐一</td>
+            <td>HG1254</td>
+            <td>韩东升</td>
+            <td>2016-12-26 12:00:01</td>
+            <td>曲江派出所曲江路网点</td>
+        </tr>
+        <tr>
+            <td>李东神</td>
+            <td>13562547857</td>
+            <td>收费套餐一</td>
+            <td>HG1254</td>
+            <td>韩东升</td>
+            <td>2016-12-26 12:00:01</td>
+            <td>曲江派出所曲江路网点</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="admin-table-page">
+        <div id="page" class="page">
+        </div>
+    </div>
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form','laydate'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页操作
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+        //日期
+        var laydate = layui.laydate;
+
+        var start = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+
+        var end = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+
+
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+</script>
+
+</body>
+
+</html>

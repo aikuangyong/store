@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SmsinfoMapper">
+    <resultMap id="smsinfoMap" type="com.store.model.SmsinfoModel">
+                    <id column="smsid" property="smsid" javaType="String" />
+                    <result column="phoneno" property="phoneno" javaType="String" />
+                    <result column="sendtime" property="sendtime" javaType="Date" />
+                    <result column="verifycode" property="verifycode" javaType="String" />
+                    <result column="smstype" property="smstype" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="smsinfoModel" resultType="smsinfoModel">
+		SELECT
+            smsid,
+            phoneno,
+            sendtime,
+            verifycode,
+            smstype
+		FROM
+            Smsinfo tbl
+        where 1=1
+            <if test="smsid != '' and smsid != null ">
+                and smsid = #{smsid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="sendtime != null ">
+                and sendtime = #{sendtime}
+            </if>
+            <if test="verifycode != '' and verifycode != null ">
+                and verifycode = #{verifycode}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+
+    <select id="getLastSmsInfo" parameterType="smsinfoModel" resultType="smsinfoModel">
+		SELECT
+            smsid,
+            phoneno,
+            sendtime,
+            verifycode,
+            smstype
+		FROM
+            Smsinfo tbl
+        where 1=1
+            <if test="smsid != '' and smsid != null ">
+                and smsid = #{smsid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="smstype != '' and smstype != null ">
+                and smstype = #{smstype}
+            </if>
+            <if test="sendtime != null">
+                and sendtime = #{sendtime}
+            </if>
+            <if test="verifycode != '' and verifycode != null ">
+                and verifycode = #{verifycode}
+            </if>
+        order by sendtime desc
+        limit 0,1
+	</select>
+
+    <select id="getCount" parameterType="smsinfoModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Smsinfo
+        where 1=1
+            <if test="smsid != '' and smsid != null ">
+                and smsid = #{smsid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="sendtime != '' and sendtime != null ">
+                and sendtime = #{sendtime}
+            </if>
+            <if test="verifycode != '' and verifycode != null ">
+                and verifycode = #{verifycode}
+            </if>
+    </select>
+
+    <update id="update" parameterType="smsinfoModel" >
+        update Smsinfo tbl
+        set smsid = smsid
+            <if test="phoneno != '' and phoneno != null ">
+                ,phoneno =#{phoneno}
+            </if>
+            <if test="sendtime != '' and sendtime != null ">
+                ,sendtime =#{sendtime}
+            </if>
+            <if test="verifycode != '' and verifycode != null ">
+                ,verifycode =#{verifycode}
+            </if>
+        where smsid = #{smsid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="smsinfoModel">
+        update Smsinfo set valid = ${valid} where smsid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="smsinfoModel">
+        delete FROM  Smsinfo where
+        smsid = #{smsid}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="smsid" parameterType="smsinfoModel">
+        <selectKey  keyProperty="smsid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Smsinfo
+        (
+            smsid,
+            phoneno,
+            sendtime,
+            verifycode,
+            smstype,
+            resultMsg
+        )
+        values
+        (
+            #{smsid},
+            #{phoneno},
+            #{sendtime},
+            #{verifycode},
+            #{smstype},
+            #{resultMsg}
+        )
+    </insert>
+</mapper>

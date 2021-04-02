@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>发票详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+        .file-detail{margin:30px 60px;}
+        .file-detail p{ line-height: 30px;}
+        .file-pic img{ padding: 10px;}
+    </style>
+</head>
+
+<body>
+<div class="admin-main">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="invoice.html">发票管理<span class="layui-box">&gt;</span></a><a><cite>详情</cite></a></span></p>
+
+     <span class="fr" style="float:right;">
+                        <a class="layui-btn layui-btn-danger radius btn-delect" id="btn-delect-all"><i class="layui-icon">&#xe60a;</i> 确定开票</a>
+
+                    </span>
+    <div class="file-detail" style="">
+            <p>申请开票人：韩晓云</p>
+            <p>开票性质：个人</p>
+            <p>开票单位：陕西省西安市信诺实业集团</p>
+            <p>开票金额：1152.00</p>
+            <p>收件人：云霄天</p>
+            <p>收件地址：陕西省西安市莲湖区桃园路1号</p>
+            <p>收件人电话：15265458785</p>
+            <div class="" style="margin-top: 10px;">开票明细：
+                <table class="site-table table-hover">
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>分类</th>
+                        <th>价格</th>
+                        <th>购买人</th>
+                        <th>身份证号</th>
+                        <th>所在派出所</th>
+                        <th>购买时间</th>
+                        <th>到期时间</th>
+                        <th>验证码</th>
+                        <th>是否领取奖品</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>充值套餐</td>
+                        <td>分类1</td>
+                        <td>999.99</td>
+                        <td>李联讯</td>
+                        <td>612452265458754785</td>
+                        <td>陕西省西安市雁塔分局曲江派出所</td>
+                        <td>2016-12-12</td>
+                        <td>2017-8-12</td>
+                        <td>YHKUJI</td>
+                        <td class="receive-state">否</td>
+                    </tr>
+                    <tr>
+                        <td>充值套餐</td>
+                        <td>分类1</td>
+                        <td>999.99</td>
+                        <td>李联讯</td>
+                        <td>612452265458754785</td>
+                        <td>陕西省西安市雁塔分局曲江派出所</td>
+                        <td>2016-12-12</td>
+                        <td>2017-8-12</td>
+                        <td>YHKUJI</td>
+                        <td>否</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+</div>
+
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+        /*layer = parent.layer === undefined ? layui.layer : parent.layer;*/
+                layer = layui.layer;
+
+        //分页
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

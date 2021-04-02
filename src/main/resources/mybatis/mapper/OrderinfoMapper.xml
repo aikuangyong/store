@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.OrderinfoMapper">
+    <resultMap id="orderinfoMap" type="com.store.model.OrderinfoModel">
+        <id column="orderid" property="orderid" javaType="String"/>
+        <result column="sendtype" property="sendtype" javaType="String"/>
+        <result column="createtime" property="createtime" javaType="Date"/>
+        <result column="paytime" property="paytime" javaType="Date"/>
+        <result column="sendinfo" property="sendinfo" javaType="String"/>
+        <result column="phoneno" property="phoneno" javaType="String"/>
+        <result column="orderprice" property="orderprice" javaType="Double"/>
+        <result column="saleprice" property="saleprice" javaType="Double"/>
+        <result column="storeid" property="storeid" javaType="String"/>
+        <result column="storename" property="storename" javaType="String"/>
+        <result column="receiveaddress" property="receiveaddress" javaType="String"/>
+        <result column="sendtime" property="sendtime" javaType="String"/>
+        <result column="vegetable" property="vegetable" javaType="String"/>
+        <result column="vegetableimage" property="vegetableimage" javaType="String"/>
+        <result column="orderstatus" property="orderstatus" javaType="String"/>
+        <result column="receivephone" property="receivephone" javaType="String"/>
+        <result column="receiveuser" property="receiveuser" javaType="String"/>
+        <result column="orderno" property="orderno" javaType="String"/>
+    </resultMap>
+
+    <select id="getAppOrderList" parameterType="orderinfoModel" resultType="orderinfoModel">
+        SELECT
+        orderno,
+        sendtype,
+        orderstatus,
+        orderprice,
+        saleprice,
+        paytype,
+        cardno,
+        paytime,
+        order_tbl.storename,
+        order_tbl.createtime,
+        store.storename,
+        store.storephone,
+        store.storeaddress
+        FROM orderinfo order_tbl
+        INNER JOIN store ON order_tbl.storeid = store.storeid
+        WHERE userid = #{userid} and orderno NOT IN (SELECT ORDERNO FROM afterservice)
+        <if test="orderstatus != '' and orderstatus != null ">
+            and orderstatus = #{orderstatus}
+        </if>
+        order by createtime desc
+    </select>
+
+    <select id="getAppOrderPorductList" parameterType="orderinfoModel" resultType="orderdetailModel">
+        SELECT
+        imghref imagesrc,detailid,
+        imghref ,vid as vegetable ,v_tbl.vegetablename ,o_detail.orderno
+        FROM orderdetail o_detail
+        INNER JOIN VEGETABLE v_tbl ON o_detail.vegetable = v_tbl.vid
+        INNER JOIN v_thum_img v_img ON v_tbl.vegetableimg = v_img.imggrp
+        where o_detail.orderno in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </select>
+
+    <select id="getList" parameterType="orderinfoModel" resultType="orderinfoModel">
+        SELECT
+            orderid,
+            sendtype,
+            tbl.createtime,
+            sendinfo,
+            tbl.phoneno,
+            orderprice,
+            saleprice,
+            store_tbl.sid storeid,
+            sname storename,
+            sphone storephone,
+            saddress storeaddress,
+            receiveaddress,
+            sendtime,
+            vegetable,
+            vegetableimage,
+            orderstatus,
+            receivephone,
+            receiveuser,
+            orderno,
+            paytype,
+            cardno,
+            paytime,
+            nickname
+        FROM
+        Orderinfo tbl
+        INNER JOIN customer user_tbl ON tbl.userid = user_tbl.uid
+        INNER JOIN (SELECT storeid sid,storename sname ,storephone sphone ,storeaddress  saddress FROM store) store_tbl ON tbl.storeid = store_tbl.sid
+        where 1=1
+        <if test="begincreatetime != null and begincreatetime != 0">
+            <![CDATA[ and UNIX_TIMESTAMP(createtime) >= #{begincreatetime} ]]>
+        </if>
+        <if test="endcreatetime != null and endcreatetime != 0 ">
+            <![CDATA[ and UNIX_TIMESTAMP(createtime) <= #{endcreatetime} ]]>
+        </if>
+        <if test="orderid != '' and orderid != null ">
+            and orderid = #{orderid}
+        </if>
+        <if test="receiveuser != '' and receiveuser != null ">
+            and receiveuser = #{receiveuser}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="sendinfo != '' and sendinfo != null ">
+            and sendinfo = #{sendinfo}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and tbl.phoneno = #{phoneno}
+        </if>
+        <if test="orderprice != '' and orderprice != null ">
+            and orderprice = #{orderprice}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            and saleprice = #{saleprice}
+        </if>
+        <if test="storeid != '' and storeid != null ">
+            and storeid = #{storeid}
+        </if>
+        <if test="storename != '' and storename != null ">
+            and storename = #{storename}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            and receiveaddress = #{receiveaddress}
+        </if>
+        <if test="sendtime != '' and sendtime != null ">
+            and sendtime = #{sendtime}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            and vegetable = #{vegetable}
+        </if>
+        <if test="vegetableimage != '' and vegetableimage != null ">
+            and vegetableimage = #{vegetableimage}
+        </if>
+        <if test="orderstatus != '' and orderstatus != null ">
+            and orderstatus = #{orderstatus}
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            and receivephone = #{receivephone}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno like CONCAT('%',#{orderno},'%')
+        </if>
+        order by tbl.createtime desc
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="orderinfoModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Orderinfo tbl
+        INNER JOIN customer user_tbl ON tbl.userid = user_tbl.uid
+        INNER JOIN (SELECT storeid sid,storename sname ,storephone sphone ,storeaddress  saddress FROM store) store_tbl ON tbl.storeid = store_tbl.sid
+        where 1=1
+        <if test="orderid != '' and orderid != null ">
+            and orderid = #{orderid}
+        </if>
+        <if test="sendtype != '' and sendtype != null ">
+            and sendtype = #{sendtype}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="sendinfo != '' and sendinfo != null ">
+            and sendinfo = #{sendinfo}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and phoneno = #{phoneno}
+        </if>
+        <if test="orderprice != '' and orderprice != null ">
+            and orderprice = #{orderprice}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            and saleprice = #{saleprice}
+        </if>
+        <if test="storeid != '' and storeid != null ">
+            and storeid = #{storeid}
+        </if>
+        <if test="storename != '' and storename != null ">
+            and storename = #{storename}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            and receiveaddress = #{receiveaddress}
+        </if>
+        <if test="sendtime != '' and sendtime != null ">
+            and sendtime = #{sendtime}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            and vegetable = #{vegetable}
+        </if>
+        <if test="vegetableimage != '' and vegetableimage != null ">
+            and vegetableimage = #{vegetableimage}
+        </if>
+        <if test="orderstatus != '' and orderstatus != null ">
+            and orderstatus = #{orderstatus}
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            and receivephone = #{receivephone}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno like CONCAT('%',#{orderno},'%')
+        </if>
+    </select>
+
+    <update id="update" parameterType="orderinfoModel">
+        update Orderinfo tbl
+        set orderid = orderid
+        <if test="begincreatetime != null and begincreatetime != 0">
+            <![CDATA[ and UNIX_TIMESTAMP(createtime) >= #{begincreatetime} ]]>
+        </if>
+        <if test="endcreatetime != null and endcreatetime != 0 ">
+            <![CDATA[ and UNIX_TIMESTAMP(createtime) <= #{endcreatetime} ]]>
+        </if>
+        <if test="sendtype != '' and sendtype != null ">
+            ,sendtype =#{sendtype}
+        </if>
+        <if test=" createtime != null ">
+            ,createtime =#{createtime}
+        </if>
+        <if test="sendinfo != '' and sendinfo != null ">
+            ,sendinfo =#{sendinfo}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            ,phoneno =#{phoneno}
+        </if>
+        <if test="orderprice != '' and orderprice != null ">
+            ,orderprice =#{orderprice}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            ,saleprice =#{saleprice}
+        </if>
+        <if test="storeid != '' and storeid != null ">
+            ,storeid =#{storeid}
+        </if>
+        <if test="storename != '' and storename != null ">
+            ,storename =#{storename}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            ,receiveaddress =#{receiveaddress}
+        </if>
+        <if test="sendtime != '' and sendtime != null ">
+            ,sendtime =#{sendtime}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            ,vegetable =#{vegetable}
+        </if>
+        <if test="vegetableimage != '' and vegetableimage != null ">
+            ,vegetableimage =#{vegetableimage}
+        </if>
+        <if test="orderstatus != '' and orderstatus != null ">
+            ,orderstatus =#{orderstatus}
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            ,receivephone =#{receivephone}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            ,orderno = #{orderno}
+        </if>
+        <if test="paytype != '' and paytype != null ">
+            ,paytype = #{paytype}
+        </if>
+        <if test="paytime != null ">
+            ,paytime = #{paytime}
+        </if>
+        where orderid = #{orderid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="orderinfoModel">
+        update Orderinfo set valid = ${valid} where orderid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="orderinfoModel">
+        delete FROM Orderinfo where
+        orderid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insertDeleteOrder" parameterType="com.store.model.DeleteRecord">
+        insert  into  deleterecord
+        (content,datatype)
+        values
+        (#{content},#{datatype})
+
+    </insert>
+
+    <delete id="deleteOrder" parameterType="orderinfoModel">
+        delete FROM  Orderinfo where
+        orderid = #{orderid}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderid" parameterType="orderinfoModel">
+        <selectKey keyProperty="orderid" resultType="java.lang.String" order="BEFORE">
+            select MD5(uuid())
+        </selectKey>
+        insert into Orderinfo
+        (
+        orderid,
+        sendtype,
+        createtime,
+        sendinfo,
+        phoneno,
+        orderprice,
+        saleprice,
+        storeid,
+        storename,
+        receiveaddress,
+        sendtime,
+        vegetable,
+        vegetableimage,
+        orderstatus,
+        receivephone,
+        receiveuser,
+        orderno,
+        userid,
+        addressid,
+        paytype,
+        cardno,
+        paytime
+        )
+        values
+        (
+        #{orderid},
+        #{sendtype},
+        #{createtime},
+        #{sendinfo},
+        #{phoneno},
+        #{orderprice},
+        #{saleprice},
+        #{storeid},
+        #{storename},
+        #{receiveaddress},
+        #{sendtime},
+        #{vegetable},
+        #{vegetableimage},
+        #{orderstatus},
+        #{receivephone},
+        #{receiveuser},
+        #{orderno},
+        #{userid},
+        #{addressid},
+        #{paytype},
+        #{cardno},
+        #{paytime}
+        )
+    </insert>
+</mapper>

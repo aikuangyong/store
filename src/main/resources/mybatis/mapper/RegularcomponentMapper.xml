@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RegularcomponentMapper">
+    <resultMap id="regularcomponentMap" type="com.store.model.RegularcomponentModel">
+        <id column="rcid" property="rcid" javaType="String"/>
+        <result column="rid" property="rid" javaType="String"/>
+        <result column="row" property="row" javaType="String"/>
+        <result column="col" property="col" javaType="String"/>
+        <result column="val" property="val" javaType="String"/>
+        <result column="createtime" property="createtime" javaType="Date"/>
+    </resultMap>
+
+    <select id="getRegularPrice" parameterType="java.util.Map" resultType="regularcomponentModel">
+        SELECT
+          VAL
+        FROM regularcomponent MAIN_TBL
+        INNER JOIN (SELECT MAX(ROW) ROW_DATA,MAX(COL) COL_DATA FROM regularcomponent WHERE VAL = #{sendcount} OR VAL = #{unit}) DIM_TBL
+        ON  MAIN_TBL.ROW = DIM_TBL.ROW_DATA AND MAIN_TBL.COL = DIM_TBL.COL_DATA
+
+    </select>
+
+    <select id="getList" parameterType="regularcomponentModel" resultType="regularcomponentModel">
+        SELECT
+        rcid,
+        rid,
+        row,
+        col,
+        val,
+        createtime
+        FROM
+        Regularcomponent tbl
+        where 1=1
+        <if test="rcid != '' and rcid != null ">
+            and rcid = #{rcid}
+        </if>
+        <if test="rid != '' and rid != null ">
+            and rid = #{rid}
+        </if>
+        <if test="row != '' and row != null ">
+            and row = #{row}
+        </if>
+        <if test="col != '' and col != null ">
+            and col = #{col}
+        </if>
+        <if test="val != '' and val != null ">
+            and val = #{val}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="orderColumn != null and orderType != null">
+            order by ${orderColumn} ${orderType}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="regularcomponentModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Regularcomponent
+        where 1=1
+        <if test="rcid != '' and rcid != null ">
+            and rcid = #{rcid}
+        </if>
+        <if test="rid != '' and rid != null ">
+            and rid = #{rid}
+        </if>
+        <if test="row != '' and row != null ">
+            and row = #{row}
+        </if>
+        <if test="col != '' and col != null ">
+            and col = #{col}
+        </if>
+        <if test="val != '' and val != null ">
+            and val = #{val}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+    </select>
+
+    <update id="update" parameterType="regularcomponentModel">
+        update Regularcomponent tbl
+        set rcid = rcid
+        <if test="rid != '' and rid != null ">
+            ,rid =#{rid}
+        </if>
+        <if test="row != '' and row != null ">
+            ,row =#{row}
+        </if>
+        <if test="col != '' and col != null ">
+            ,col =#{col}
+        </if>
+        <if test="val != '' and val != null ">
+            ,val =#{val}
+        </if>
+        <if test=" createtime != null ">
+            ,createtime =#{createtime}
+        </if>
+        where rcid = #{rcid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="regularcomponentModel">
+        update Regularcomponent set valid = ${valid} where rcid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="regularcomponentModel">
+        delete FROM Regularcomponent where
+        rcid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByRid" parameterType="regularcomponentModel">
+        delete FROM  Regularcomponent where
+        rid = #{rid}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="rcid" parameterType="regularcomponentModel">
+        <selectKey keyProperty="rcid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Regularcomponent
+        (
+        rcid,
+        rid,
+        row,
+        col,
+        val,
+        createtime
+        )
+        values
+        (
+        #{rcid},
+        #{rid},
+        #{row},
+        #{col},
+        #{val},
+        #{createtime}
+        )
+    </insert>
+</mapper>

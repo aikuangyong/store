@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SendtimeconfigMapper">
+    <resultMap id="sendtimeconfigMap" type="com.store.model.SendtimeconfigModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="starttime" property="starttime" javaType="String" />
+                    <result column="endtime" property="endtime" javaType="String" />
+                    <result column="groupseq" property="groupseq" javaType="String" />
+                    <result column="showtext" property="showtext" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+    </resultMap>
+
+    <select id="getList" parameterType="sendtimeconfigModel" resultType="sendtimeconfigModel">
+		SELECT
+            id,
+            starttime,
+            endtime,
+            groupseq,
+            showtext,
+            createtime
+		FROM
+            Sendtimeconfig tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="starttime != '' and starttime != null ">
+                and starttime = #{starttime}
+            </if>
+            <if test="endtime != '' and endtime != null ">
+                and endtime = #{endtime}
+            </if>
+            <if test="groupseq != '' and groupseq != null ">
+                and groupseq = #{groupseq}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        <if test="orderColumn != null and orderType != null">
+            order by ${orderColumn} ${orderType}
+        </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="sendtimeconfigModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Sendtimeconfig
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="starttime != '' and starttime != null ">
+                and starttime = #{starttime}
+            </if>
+            <if test="endtime != '' and endtime != null ">
+                and endtime = #{endtime}
+            </if>
+            <if test="groupseq != '' and groupseq != null ">
+                and groupseq = #{groupseq}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="sendtimeconfigModel" >
+        update Sendtimeconfig tbl
+        set id = id
+            <if test="starttime != '' and starttime != null ">
+                ,starttime =#{starttime}
+            </if>
+            <if test="endtime != '' and endtime != null ">
+                ,endtime =#{endtime}
+            </if>
+            <if test="groupseq != '' and groupseq != null ">
+                ,groupseq =#{groupseq}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="sendtimeconfigModel">
+        update Sendtimeconfig set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="sendtimeconfigModel">
+        delete FROM  Sendtimeconfig where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAll" parameterType="sendtimeconfigModel">
+        delete FROM Sendtimeconfig
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="sendtimeconfigModel">
+        insert into Sendtimeconfig
+        (
+            id,
+            starttime,
+            endtime,
+            groupseq,
+            showtext,
+            createtime
+        )
+        values
+        (
+            ${id},
+            #{starttime},
+            #{endtime},
+            #{groupseq},
+            #{showtext},
+            #{createtime}
+        )
+    </insert>
+
+</mapper>

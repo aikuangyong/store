@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.CustomerMapper">
+    <resultMap id="customerMap" type="com.store.model.CustomerModel">
+        <id column="UID" property="uid" javaType="String" />
+        <result column="USERID" property="userno" javaType="String" />
+        <result column="PASSWORD" property="password" javaType="String" />
+        <result column="NICKNAME" property="nickname" javaType="String" />
+        <result column="ICON" property="icon" javaType="String" />
+        <result column="PHONENO" property="phoneno" javaType="String" />
+        <result column="LOGINTYPE" property="logintype" javaType="String" />
+        <result column="CONSTNO" property="constno" javaType="String" />
+        <result column="DISCOUNT" property="discount" javaType="String" />
+        <result column="BALANCE" property="balance" javaType="Double" />
+        <result column="REGISTERTIME" property="registertime" javaType="Date" />
+        <result column="VALID" property="valid" javaType="Integer" />
+    </resultMap>
+
+    <select id="getList" parameterType="customerModel" resultType="customerModel">
+        SELECT
+        UID,
+        USERID,
+        PASSWORD,
+        NICKNAME,
+        CONCAT(od.`href`,SRC) as ICON,
+        PHONENO,
+        LOGINTYPE,
+        CONSTNO,
+        DISCOUNT,
+        BALANCE,
+        REGISTERTIME,
+        VALID
+        FROM
+        Customer tbl
+        LEFT JOIN imageinfo ii ON tbl.`ICON` = ii.`imggrp`
+        INNER JOIN ondomain od ON 1=1
+        where 1=1
+        <if test="uid != '' and uid != null ">
+            and UID = #{uid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and USERID = #{userid}
+        </if>
+        <if test="password != '' and password != null ">
+            and PASSWORD = #{password}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and NICKNAME like concat("%",#{nickname},"%")
+        </if>
+        <if test="icon != '' and icon != null ">
+            and ICON = #{icon}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and PHONENO like concat("%",#{phoneno},"%")
+        </if>
+        <if test="logintype != '' and logintype != null ">
+            and LOGINTYPE = #{logintype}
+        </if>
+        <if test="constno != '' and constno != null ">
+            and CONSTNO = #{constno}
+        </if>
+        <if test="discount != '' and discount != null ">
+            and DISCOUNT = #{discount}
+        </if>
+        <if test="balance != '' and balance != null ">
+            and BALANCE = #{balance}
+        </if>
+        <if test="registertime != '' and registertime != null ">
+            and REGISTERTIME = #{registertime}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and VALID = #{valid}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="customerModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Customer
+        where 1=1
+        <if test="uid != '' and uid != null ">
+            and UID = #{uid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and USERID = #{userid}
+        </if>
+        <if test="password != '' and password != null ">
+            and PASSWORD = #{password}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and NICKNAME = #{nickname}
+        </if>
+        <if test="icon != '' and icon != null ">
+            and ICON = #{icon}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and PHONENO like concat("%",#{phoneno},"%")
+        </if>
+        <if test="logintype != '' and logintype != null ">
+            and LOGINTYPE = #{logintype}
+        </if>
+        <if test="constno != '' and constno != null ">
+            and CONSTNO = #{constno}
+        </if>
+        <if test="discount != '' and discount != null ">
+            and DISCOUNT = #{discount}
+        </if>
+        <if test="balance != '' and balance != null ">
+            and BALANCE = #{balance}
+        </if>
+        <if test="registertime != '' and registertime != null ">
+            and REGISTERTIME = #{registertime}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and VALID = #{valid}
+        </if>
+    </select>
+
+    <update id="updateClientType" parameterType="customerModel" >
+        update Customer tbl set LOGINTYPE =#{logintype} where uid = #{uid}
+    </update>
+
+    <update id="update" parameterType="customerModel" >
+        update Customer tbl
+        set UID=uid
+        <if test="userid != '' and userid != null ">
+            ,USERID =#{userid}
+        </if>
+        <if test="password != '' and password != null ">
+            ,PASSWORD =#{password}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            ,NICKNAME =#{nickname}
+        </if>
+        <if test="icon != '' and icon != null ">
+            ,ICON =#{icon}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            ,PHONENO =#{phoneno}
+        </if>
+        <if test="logintype != '' and logintype != null ">
+            ,LOGINTYPE =#{logintype}
+        </if>
+        <if test="constno != '' and constno != null ">
+            ,CONSTNO =#{constno}
+        </if>
+        <if test="discount != '' and discount != null ">
+            ,DISCOUNT =#{discount}
+        </if>
+        <if test="balance != '' and balance != null ">
+            ,BALANCE =#{balance}
+        </if>
+        <if test="valid != '' and valid != null ">
+            ,VALID =#{valid}
+        </if>
+        where 1=1
+        <if test="phoneno != '' and phoneno != null ">
+            and PHONENO = #{phoneno}
+        </if>
+        <if test="uid != '' and uid != null ">
+            and uid = #{uid}
+        </if>
+    </update>
+
+    <update id="updatePhone" parameterType="customerModel" >
+        update Customer tbl
+        set PHONENO =#{phoneno}
+        where uid = #{uid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="customerModel">
+        update Customer set valid = ${valid} where UID
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <update id="changeBindUser" parameterType="customerModel">
+        update customer set phoneno = #{phoneno} where uid = #{uid}
+    </update>
+
+    <update id="changeBindThird" parameterType="customerModel">
+        update bindinfo set phoneno = #{phoneno} where phoneno = #{oldphone}
+    </update>
+
+    <delete id="delete" parameterType="customerModel">
+        delete FROM  Customer where
+        UID in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="UID" parameterType="customerModel">
+        insert into Customer
+        (
+                    UID,
+                    USERID,
+                    PASSWORD,
+                    NICKNAME,
+                    ICON,
+                    PHONENO,
+                    LOGINTYPE,
+                    CONSTNO,
+                    DISCOUNT,
+                    BALANCE,
+                    REGISTERTIME,
+                    VALID,
+                    verifycode
+        )
+        values
+        (
+                    #{uid},
+                    #{userid},
+                    #{password},
+                    #{nickname},
+                    #{icon},
+                    #{phoneno},
+                    #{logintype},
+                    #{constno},
+                    #{discount},
+                    #{balance},
+                    #{registertime},
+                    #{valid},
+                    #{verifycode}
+        )
+    </insert>
+</mapper>

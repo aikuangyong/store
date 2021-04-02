@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.CitiesMapper">
+    <resultMap id="citiesMap" type="com.store.model.CitiesModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="cityid" property="cityid" javaType="String" />
+                    <result column="city" property="city" javaType="String" />
+                    <result column="provinceid" property="provinceid" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="citiesModel" resultType="citiesModel">
+		SELECT
+                    id,
+                    cityid,
+                    city,
+                    provinceid
+		FROM
+            Cities tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="cityid != '' and cityid != null ">
+                and cityid = #{cityid}
+            </if>
+            <if test="city != '' and city != null ">
+                and city = #{city}
+            </if>
+            <if test="provinceid != '' and provinceid != null ">
+                and provinceid = #{provinceid}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="citiesModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Cities
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="cityid != '' and cityid != null ">
+                and cityid = #{cityid}
+            </if>
+            <if test="city != '' and city != null ">
+                and city = #{city}
+            </if>
+            <if test="provinceid != '' and provinceid != null ">
+                and provinceid = #{provinceid}
+            </if>
+    </select>
+
+    <update id="update" parameterType="citiesModel" >
+        update Cities tbl
+        set id = id
+            <if test="cityid != '' and cityid != null ">
+                ,cityid =#{cityid}
+            </if>
+            <if test="city != '' and city != null ">
+                ,city =#{city}
+            </if>
+            <if test="provinceid != '' and provinceid != null ">
+                ,provinceid =#{provinceid}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="citiesModel">
+        update Cities set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="citiesModel">
+        delete FROM  Cities where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="citiesModel">
+        <selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Cities
+        (
+                    id,
+                    cityid,
+                    city,
+                    provinceid
+        )
+        values
+        (
+                    #{id},
+                    #{cityid},
+                    #{city},
+                    #{provinceid}
+        )
+    </insert>
+</mapper>

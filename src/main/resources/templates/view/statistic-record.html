@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>统计分析</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+</head>
+<body>
+<div class="admin-main">
+
+    <!-- <p class="page-tab"><span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;"><a href="">首页<span class="layui-box">&gt;</span></a><a><cite>用户列表</cite></a></span></p>-->
+    <div class="handle-box">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: auto;">请选择查询时间维度：</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="radio" name="date" value="年" title="年">
+                        <input type="radio" name="date" value="月" title="月" checked>
+                        <input type="radio" name="date" value="日" title="日">
+                    </div>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" class="layui-input" placeholder="请选择时间"  onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM'})">
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: auto;">请选择单位：</label>
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="0">陕西省</option>
+                            <option value="1" selected="">安徽省</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 100px;">
+                        <select name="interest" lay-filter="">
+                            <option value="" ></option>
+                            <option value="0" selected="">全部</option>
+                            <option value="5">西安市</option>
+                            <option value="1" >安康市</option>
+                            <option value="2">商洛市</option>
+                            <option value="3">咸阳市</option>
+                            <option value="4">宝鸡市</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 130px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="" selected="">全部</option>
+                            <option value="0">雁塔分局</option>
+                            <option value="1">碑林分局</option>
+                            <option value="2">莲湖分局</option>
+                            <option value="3">咸阳市</option>
+                            <option value="4">宝鸡市</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 130px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="" selected="">全部</option>
+                            <option value="0">曲江派出所</option>
+                            <option value="1">锦业路派出所</option>
+                            <option value="2">雁翔路派出所</option>
+                            <option value="3">唐延路派出所</option>
+                            <option value="4">文一路派出所</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <button class="layui-btn" >查询</button>
+
+            </div>
+
+        </form>
+    </div>
+
+    <div class="layui-clear" style="margin-top: 20px;">
+        <script src="js/echarts.common.min.js"></script>
+        <div style="width: 35%; float: right; border:1px solid #dddddd; " >
+            <div id="main" style="width: 95%; height: 400px; margin: 0 auto; " ></div>
+        </div>
+
+        <script type="text/javascript">
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+
+
+            var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+            option = {
+                title : {
+                    text: '图标统计',
+                    x:'center'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                color:['#5793f3', '#d14a61', '#675bba'],
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['购买保险','备案统计']
+                },
+                series : [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data:[
+                            {value:335, name:'购买保险'},
+                            {value:310, name:'备案统计'},
+
+                        ],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        </script>
+        <div style="width: 60%; float: left; ">
+        <table class="site-table table-hover" style="margin-top: 0;">
+            <thead>
+            <tr>
+                <th>单位</th>
+                <th>购买保险数量</th>
+                <th>备案登记数量</th>
+                <th>操作</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>陕西省西安市莲湖分局桃园路派出所</td>
+                <td>150</td>
+                <td>250</td>
+                <td>
+                    <a href="" class="layui-btn layui-btn-warm layui-btn-mini">详情</a>
+                </td>
+            </tr>
+            <tr>
+                <td>陕西省西安市莲湖分局桃园路派出所</td>
+                <td>150</td>
+                <td>250</td>
+                <td>
+                    <a href="" class="layui-btn layui-btn-warm layui-btn-mini">详情</a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <div class="admin-table-page">
+            <div id="page" class="page">
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['layer','form','laydate','laypage'], function() {
+        var $ = layui.jquery;
+        //分页
+        var laypage = layui.laypage;
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+        //日期选择
+        var laydate = layui.laydate;
+
+        var start = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+
+        var end = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            /* layer.alert(JSON.stringify(data.field), {
+             title: '最终的提交信息'
+             })*/
+            layer.msg('已提交审核，请耐心等待', {icon: 1});
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+pos:
+  appid: f93fb45f-ed25-466a-9215-d0d93a809f98
+  secret: 2194BE12F45556DDE33E8139C1CC5518
+wx:
+  appid: wx1cc38c94b01bbf82
+  secret: ff5ccfdb59dface81e9ec02e9aa45916
+spring:
+  profiles:
+    active: dev
+pay:
+  key: KXGIVU20140619H
+  posNo: 1511720071
+shiro:
+  loginUrl: /401         # 用户未登录时跳转的请求路径
+  unauthorizedUrl: /403  # 用户没有访问权限时跳转的请求路径
+  userNativeSessionManager: true
+  sessionManager:
+    cookie:
+      name: BIUSID
+logging:
+  level:
+    org:
+      springframework: INFO
+      spring:
+        springboot:
+          dao: DEBUG
+    com:
+      store:
+        mapper: DEBUG
+        dao: DEBUG
+    root: ERROR

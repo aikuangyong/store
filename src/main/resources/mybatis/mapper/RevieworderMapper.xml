@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RevieworderMapper">
+    <resultMap id="revieworderMap" type="com.store.model.RevieworderModel">
+                    <id column="roid" property="roid" javaType="String" />
+                    <result column="userid" property="userid" javaType="String" />
+                    <result column="nickname" property="nickname" javaType="String" />
+                    <result column="phoneno" property="phoneno" javaType="String" />
+                    <result column="cardno" property="cardno" javaType="String" />
+                    <result column="cardcost" property="cardcost" javaType="String" />
+                    <result column="beforebalance" property="beforebalance" javaType="Double" />
+                    <result column="afterbalance" property="afterbalance" javaType="Double" />
+                    <result column="reviewer" property="reviewer" javaType="String" />
+                    <result column="store" property="store" javaType="String" />
+                    <result column="edittime" property="edittime" javaType="Date" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="orderno" property="orderno" javaType="String" />
+                    <result column="status" property="status" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="revieworderModel" resultType="revieworderModel">
+		SELECT
+                    roid,
+                    userid,
+                    nickname,
+                    phoneno,
+                    cardno,
+                    cardcost,
+                    beforebalance,
+                    afterbalance,
+                    reviewer,
+                    store,
+                    edittime,
+                    createtime,
+                    orderno,
+                    status
+		FROM
+            Revieworder tbl
+        where 1=1
+            <if test="roid != '' and roid != null ">
+                and roid = #{roid}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                and nickname = #{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="cardno != '' and cardno != null ">
+                and cardno = #{cardno}
+            </if>
+            <if test="cardcost != '' and cardcost != null ">
+                and cardcost = #{cardcost}
+            </if>
+            <if test="beforebalance != '' and beforebalance != null ">
+                and beforebalance = #{beforebalance}
+            </if>
+            <if test="afterbalance != '' and afterbalance != null ">
+                and afterbalance = #{afterbalance}
+            </if>
+            <if test="reviewer != '' and reviewer != null ">
+                and reviewer = #{reviewer}
+            </if>
+            <if test="store != '' and store != null ">
+                and store = #{store}
+            </if>
+            <if test="edittime != '' and edittime != null ">
+                and edittime = #{edittime}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="orderno != '' and orderno != null ">
+                and orderno = #{orderno}
+            </if>
+            <if test="status != '' and status != null ">
+                and status = #{status}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="revieworderModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Revieworder
+        where 1=1
+            <if test="roid != '' and roid != null ">
+                and roid = #{roid}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                and nickname = #{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="cardno != '' and cardno != null ">
+                and cardno = #{cardno}
+            </if>
+            <if test="cardcost != '' and cardcost != null ">
+                and cardcost = #{cardcost}
+            </if>
+            <if test="beforebalance != '' and beforebalance != null ">
+                and beforebalance = #{beforebalance}
+            </if>
+            <if test="afterbalance != '' and afterbalance != null ">
+                and afterbalance = #{afterbalance}
+            </if>
+            <if test="reviewer != '' and reviewer != null ">
+                and reviewer = #{reviewer}
+            </if>
+            <if test="store != '' and store != null ">
+                and store = #{store}
+            </if>
+            <if test="edittime != '' and edittime != null ">
+                and edittime = #{edittime}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="orderno != '' and orderno != null ">
+                and orderno = #{orderno}
+            </if>
+            <if test="status != '' and status != null ">
+                and status = #{status}
+            </if>
+    </select>
+
+    <update id="update" parameterType="revieworderModel" >
+        update Revieworder tbl
+        set roid = roid
+            <if test="userid != '' and userid != null ">
+                ,userid =#{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                ,nickname =#{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                ,phoneno =#{phoneno}
+            </if>
+            <if test="cardno != '' and cardno != null ">
+                ,cardno =#{cardno}
+            </if>
+            <if test="cardcost != '' and cardcost != null ">
+                ,cardcost =#{cardcost}
+            </if>
+            <if test="beforebalance != '' and beforebalance != null ">
+                ,beforebalance =#{beforebalance}
+            </if>
+            <if test="afterbalance != '' and afterbalance != null ">
+                ,afterbalance =#{afterbalance}
+            </if>
+            <if test="reviewer != '' and reviewer != null ">
+                ,reviewer =#{reviewer}
+            </if>
+            <if test="store != '' and store != null ">
+                ,store =#{store}
+            </if>
+            <if test="edittime != '' and edittime != null ">
+                ,edittime =#{edittime}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+            <if test="orderno != '' and orderno != null ">
+                ,orderno =#{orderno}
+            </if>
+            <if test="status != '' and status != null ">
+                ,status =#{status}
+            </if>
+        where roid = #{roid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="revieworderModel">
+        update Revieworder set valid = ${valid} where roid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="revieworderModel">
+        delete FROM  Revieworder where
+        roid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="roid" parameterType="revieworderModel">
+        <selectKey  keyProperty="roid" resultType="java.lang.String" order="BEFORE">
+            select MD5(uuid())
+        </selectKey>
+        insert into Revieworder
+        (
+                    roid,
+                    userid,
+                    nickname,
+                    phoneno,
+                    cardno,
+                    cardcost,
+                    beforebalance,
+                    afterbalance,
+                    reviewer,
+                    store,
+                    edittime,
+                    createtime,
+                    orderno,
+                    status
+        )
+        values
+        (
+                    #{roid},
+                    #{userid},
+                    #{nickname},
+                    #{phoneno},
+                    #{cardno},
+                    #{cardcost},
+                    #{beforebalance},
+                    #{afterbalance},
+                    #{reviewer},
+                    #{store},
+                    #{edittime},
+                    #{createtime},
+                    #{orderno},
+                    #{status}
+        )
+    </insert>
+</mapper>

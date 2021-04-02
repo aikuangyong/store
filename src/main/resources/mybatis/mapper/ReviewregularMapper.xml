@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ReviewregularMapper">
+    <resultMap id="reviewregularMap" type="com.store.model.ReviewregularModel">
+        <id column="rrid" property="rrid" javaType="String"/>
+        <result column="userid" property="userid" javaType="String"/>
+        <result column="nickname" property="nickname" javaType="String"/>
+        <result column="phoneno" property="phoneno" javaType="String"/>
+        <result column="specification" property="specification" javaType="String"/>
+        <result column="price" property="price" javaType="Double"/>
+        <result column="surplus" property="surplus" javaType="Integer"/>
+        <result column="reviewer" property="reviewer" javaType="String"/>
+        <result column="createtime" property="createtime" javaType="Date"/>
+        <result column="edittime" property="edittime" javaType="Date"/>
+        <result column="status" property="status" javaType="String"/>
+        <result column="store" property="store" javaType="String"/>
+    </resultMap>
+
+    <select id="getList" parameterType="reviewregularModel" resultType="reviewregularModel">
+        SELECT
+            rrid,
+            userid,
+            nickname,
+            phoneno,
+            specification,
+            price,
+            surplus,
+            reviewer,
+            createtime,
+            edittime,
+            STATUS,
+            store,
+            case when store_tbl.storename is null then '测试门店' else store_tbl.storename end as storename,
+            orderno
+        FROM
+        Reviewregular tbl
+        LEFT JOIN (SELECT storeid AS id ,storename FROM store) store_tbl ON store_tbl.id = tbl.store
+        WHERE 1=1 and status = 1
+        <if test="rrid != '' and rrid != null ">
+            and rrid = #{rrid}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and nickname = #{nickname}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and phoneno = #{phoneno}
+        </if>
+        <if test="specification != '' and specification != null ">
+            and specification = #{specification}
+        </if>
+        <if test="price != '' and price != null ">
+            and price = #{price}
+        </if>
+        <if test="surplus != '' and surplus != null ">
+            and surplus = #{surplus}
+        </if>
+        <if test="reviewer != '' and reviewer != null ">
+            and reviewer = #{reviewer}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="edittime != '' and edittime != null ">
+            and edittime = #{edittime}
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="store != '' and store != null ">
+            and store = #{store}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="reviewregularModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Reviewregular
+        where 1=1 and status = 1
+        <if test="rrid != '' and rrid != null ">
+            and rrid = #{rrid}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = # {orderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and nickname = #{nickname}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and phoneno = #{phoneno}
+        </if>
+        <if test="specification != '' and specification != null ">
+            and specification = #{specification}
+        </if>
+        <if test="price != '' and price != null ">
+            and price = #{price}
+        </if>
+        <if test="surplus != '' and surplus != null ">
+            and surplus = #{surplus}
+        </if>
+        <if test="reviewer != '' and reviewer != null ">
+            and reviewer = #{reviewer}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="edittime != '' and edittime != null ">
+            and edittime = #{edittime}
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="store != '' and store != null ">
+            and store = #{store}
+        </if>
+    </select>
+
+    <update id="update" parameterType="reviewregularModel">
+        update Reviewregular tbl
+        set rrid = rrid
+        <if test="userid != '' and userid != null ">
+            ,userid =#{userid}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            ,nickname =#{nickname}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            ,phoneno =#{phoneno}
+        </if>
+        <if test="specification != '' and specification != null ">
+            ,specification =#{specification}
+        </if>
+        <if test="price != '' and price != null ">
+            ,price =#{price}
+        </if>
+        <if test="surplus != '' and surplus != null ">
+            ,surplus =#{surplus}
+        </if>
+        <if test="reviewer != '' and reviewer != null ">
+            ,reviewer =#{reviewer}
+        </if>
+        <if test=" createtime != null ">
+            ,createtime =#{createtime}
+        </if>
+        <if test="edittime != '' and edittime != null ">
+            ,edittime =#{edittime}
+        </if>
+        <if test="status != '' and status != null ">
+            ,status =#{status}
+        </if>
+        <if test="store != '' and store != null ">
+            ,store =#{store}
+        </if>
+        where rrid = #{rrid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="reviewregularModel">
+        update Reviewregular set valid = ${valid} where rrid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="reviewregularModel">
+        delete FROM Reviewregular where
+        rrid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <delete id="deleteById" parameterType="reviewregularModel">
+        delete FROM Reviewregular where
+        rrid = #{rrid}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="rrid" parameterType="reviewregularModel">
+        <selectKey keyProperty="rrid" resultType="java.lang.String" order="BEFORE">
+            select md5(uuid())
+        </selectKey>
+        insert into Reviewregular
+        (
+        rrid,
+        userid,
+        nickname,
+        phoneno,
+        specification,
+        price,
+        surplus,
+        reviewer,
+        createtime,
+        edittime,
+        status,
+        store,
+        orderno
+        )
+        values
+        (
+        #{rrid},
+        #{userid},
+        #{nickname},
+        #{phoneno},
+        #{specification},
+        #{price},
+        #{surplus},
+        #{reviewer},
+        #{createtime},
+        #{edittime},
+        #{status},
+        #{store},
+        #{orderno}
+        )
+    </insert>
+</mapper>

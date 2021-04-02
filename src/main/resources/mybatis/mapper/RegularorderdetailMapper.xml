@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RegularorderdetailMapper">
+    <resultMap id="regularorderdetailMap" type="com.store.model.RegularorderdetailModel">
+                    <id column="detailid" property="detailid" javaType="String" />
+                    <result column="orderid" property="orderid" javaType="String" />
+                    <result column="content" property="content" javaType="String" />
+                    <result column="userid" property="userid" javaType="String" />
+                    <result column="nickname" property="nickname" javaType="String" />
+                    <result column="phoneno" property="phoneno" javaType="String" />
+                    <result column="orderprice" property="orderprice" javaType="Double" />
+                    <result column="paytype" property="paytype" javaType="String" />
+                    <result column="unit" property="unit" javaType="String" />
+                    <result column="timestageText" property="timestagetext" javaType="String" />
+                    <result column="timestage" property="timestage" javaType="String" />
+                    <result column="startsendtime" property="startsendtime" javaType="Date" />
+                    <result column="sendcount" property="sendcount" javaType="Integer" />
+                    <result column="sendday" property="sendday" javaType="String" />
+                    <result column="surplus" property="surplus" javaType="Integer" />
+                    <result column="receiveaddress" property="receiveaddress" javaType="String" />
+                    <result column="sendweek" property="sendweek" javaType="String" />
+    </resultMap>
+    <!--update regularsuborder set status = 4 where regularno = #{orderno}-->
+    <update id="clearRegularSubOrder" parameterType="regularorderdetailModel">
+      SELECT fn_clearRegularSubOrder(#{orderno})
+    </update>
+
+    <update id="clearRegularOrderDetail" parameterType="regularorderdetailModel">
+        update regularorderdetail set surplus = 0 where orderid = #{orderid}
+    </update>
+
+    <update id="editRegularOrderDetailSurplus" parameterType="regularorderdetailModel">
+        update regularorderdetail set surplus = surplus+${consumeCount} where orderid = #{orderid}
+    </update>
+
+    <select id="getOrderIdByNo" parameterType="regularorderdetailModel" resultType="regularorderdetailModel">
+      select orderid from regularorder
+      WHERE ORDERNO = #{orderno}
+    </select>
+
+    <select id="getDetailData"  parameterType="regularorderdetailModel" resultType="regularorderdetailModel">
+        SELECT
+          tbl.orderid,
+          detail_tbl.content,
+          detail_tbl.nickname,
+          detail_tbl.phoneno,
+          detail_tbl.`receiveaddress`,
+          detail_tbl.saleprice,
+          detail_tbl.orderprice,
+          detail_tbl.paytype,
+          detail_tbl.unit,
+          detail_tbl.timestageText,
+          tbl.tradetime,
+          detail_tbl.startsendtime,
+          detail_tbl.`sendcount`,
+          detail_tbl.`surplus`,
+          detail_tbl.`sendday`,
+          detail_tbl.`sendweek`
+        FROM
+          Regularorder tbl
+          INNER JOIN regularorderdetail detail_tbl
+            ON tbl.`ORDERID` = detail_tbl.`orderid`
+          INNER JOIN customer user_tbl
+            ON user_tbl.`UID` = tbl.`userid`
+        where tbl.orderid = #{orderid}
+        LIMIT 0, 1
+
+    </select>
+    <select id="getList" parameterType="regularorderdetailModel" resultType="regularorderdetailModel">
+		SELECT
+                    detailid,
+                    orderid,
+                    content,
+                    userid,
+                    nickname,
+                    phoneno,
+                    orderprice,
+                    paytype,
+                    unit,
+                    timestageText,
+                    timestage,
+                    startsendtime,
+                    sendcount,
+                    sendday,
+                    surplus,
+                    receiveaddress,
+                    sendweek,
+                    saleprice
+		FROM
+            Regularorderdetail tbl
+        where 1=1
+            <if test="detailid != '' and detailid != null ">
+                and detailid = #{detailid}
+            </if>
+            <if test="orderid != '' and orderid != null ">
+                and orderid = #{orderid}
+            </if>
+            <if test="content != '' and content != null ">
+                and content = #{content}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                and nickname = #{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="orderprice != '' and orderprice != null ">
+                and orderprice = #{orderprice}
+            </if>
+            <if test="paytype != '' and paytype != null ">
+                and paytype = #{paytype}
+            </if>
+            <if test="unit != '' and unit != null ">
+                and unit = #{unit}
+            </if>
+            <if test="timestagetext != '' and timestagetext != null ">
+                and timestageText = #{timestagetext}
+            </if>
+            <if test="timestage != '' and timestage != null ">
+                and timestage = #{timestage}
+            </if>
+            <if test="startsendtime != null ">
+                and startsendtime = #{startsendtime}
+            </if>
+            <if test="sendcount != '' and sendcount != null ">
+                and sendcount = #{sendcount}
+            </if>
+            <if test="sendday != '' and sendday != null ">
+                and sendday = #{sendday}
+            </if>
+            <if test="surplus != '' and surplus != null ">
+                and surplus = #{surplus}
+            </if>
+            <if test="receiveaddress != '' and receiveaddress != null ">
+                and receiveaddress = #{receiveaddress}
+            </if>
+            <if test="sendweek != '' and sendweek != null ">
+                and sendweek = #{sendweek}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="regularorderdetailModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Regularorderdetail
+        where 1=1
+            <if test="detailid != '' and detailid != null ">
+                and detailid = #{detailid}
+            </if>
+            <if test="orderid != '' and orderid != null ">
+                and orderid = #{orderid}
+            </if>
+            <if test="content != '' and content != null ">
+                and content = #{content}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                and nickname = #{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="orderprice != '' and orderprice != null ">
+                and orderprice = #{orderprice}
+            </if>
+            <if test="paytype != '' and paytype != null ">
+                and paytype = #{paytype}
+            </if>
+            <if test="unit != '' and unit != null ">
+                and unit = #{unit}
+            </if>
+            <if test="timestagetext != '' and timestagetext != null ">
+                and timestageText = #{timestagetext}
+            </if>
+            <if test="timestage != '' and timestage != null ">
+                and timestage = #{timestage}
+            </if>
+            <if test="startsendtime != null ">
+                and startsendtime = #{startsendtime}
+            </if>
+            <if test="sendcount != '' and sendcount != null ">
+                and sendcount = #{sendcount}
+            </if>
+            <if test="sendday != '' and sendday != null ">
+                and sendday = #{sendday}
+            </if>
+            <if test="surplus != '' and surplus != null ">
+                and surplus = #{surplus}
+            </if>
+            <if test="receiveaddress != '' and receiveaddress != null ">
+                and receiveaddress = #{receiveaddress}
+            </if>
+            <if test="sendweek != '' and sendweek != null ">
+                and sendweek = #{sendweek}
+            </if>
+    </select>
+
+    <update id="update" parameterType="regularorderdetailModel" >
+        update Regularorderdetail tbl
+        set detailid = detailid
+            <if test="orderid != '' and orderid != null ">
+                ,orderid =#{orderid}
+            </if>
+            <if test="content != '' and content != null ">
+                ,content =#{content}
+            </if>
+            <if test="userid != '' and userid != null ">
+                ,userid =#{userid}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                ,nickname =#{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                ,phoneno =#{phoneno}
+            </if>
+            <if test="orderprice != '' and orderprice != null ">
+                ,orderprice =#{orderprice}
+            </if>
+            <if test="paytype != '' and paytype != null ">
+                ,paytype =#{paytype}
+            </if>
+            <if test="unit != '' and unit != null ">
+                ,unit =#{unit}
+            </if>
+            <if test="timestagetext != '' and timestagetext != null ">
+                ,timestageText =#{timestagetext}
+            </if>
+            <if test="timestage != '' and timestage != null ">
+                ,timestage =#{timestage}
+            </if>
+            <if test="startsendtime != null ">
+                ,startsendtime =#{startsendtime}
+            </if>
+            <if test="sendcount != '' and sendcount != null ">
+                ,sendcount =#{sendcount}
+            </if>
+            <if test="sendday != '' and sendday != null ">
+                ,sendday =#{sendday}
+            </if>
+            <if test="surplus != '' and surplus != null ">
+                ,surplus =#{surplus}
+            </if>
+            <if test="receiveaddress != '' and receiveaddress != null ">
+                ,receiveaddress =#{receiveaddress}
+            </if>
+            <if test="sendweek != '' and sendweek != null ">
+                ,sendweek =#{sendweek}
+            </if>
+        where detailid = #{detailid}
+    </update>
+
+    <update id="updateOrderStatus" parameterType="regularorderdetailModel" >
+        update Regularorderdetail tbl set paytype =#{paytype} ,orderstatus =#{orderstatus} where orderid = #{orderid};
+    </update>
+
+    <update id="disableOrEnable" parameterType="regularorderdetailModel">
+        update Regularorderdetail set valid = ${valid} where detailid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="regularorderdetailModel">
+        delete FROM  Regularorderdetail where
+        detailid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="detailid" parameterType="regularorderdetailModel">
+        <selectKey  keyProperty="detailid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Regularorderdetail
+        (
+                    detailid,
+                    orderid,
+                    content,
+                    userid,
+                    nickname,
+                    phoneno,
+                    orderprice,
+                    paytype,
+                    unit,
+                    timestageText,
+                    timestage,
+                    startsendtime,
+                    sendcount,
+                    sendday,
+                    surplus,
+                    receiveaddress,
+                    sendweek,
+                    saleprice
+        )
+        values
+        (
+                    #{detailid},
+                    #{orderid},
+                    #{content},
+                    #{userid},
+                    #{nickname},
+                    #{phoneno},
+                    #{orderprice},
+                    #{paytype},
+                    #{unit},
+                    #{timestagetext},
+                    #{timestage},
+                    #{startsendtime},
+                    #{sendcount},
+                    #{sendday},
+                    #{surplus},
+                    #{receiveaddress},
+                    #{sendweek},
+                    #{saleprice}
+        )
+    </insert>
+</mapper>

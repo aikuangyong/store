@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ProvincesMapper">
+    <resultMap id="provincesMap" type="com.store.model.ProvincesModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="provinceid" property="provinceid" javaType="String" />
+                    <result column="province" property="province" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="provincesModel" resultType="provincesModel">
+		SELECT
+                    id,
+                    provinceid,
+                    province
+		FROM
+            Provinces tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="provinceid != '' and provinceid != null ">
+                and provinceid = #{provinceid}
+            </if>
+            <if test="province != '' and province != null ">
+                and province = #{province}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="provincesModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Provinces
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="provinceid != '' and provinceid != null ">
+                and provinceid = #{provinceid}
+            </if>
+            <if test="province != '' and province != null ">
+                and province = #{province}
+            </if>
+    </select>
+
+    <update id="update" parameterType="provincesModel" >
+        update Provinces tbl
+        set id = id
+            <if test="provinceid != '' and provinceid != null ">
+                ,provinceid =#{provinceid}
+            </if>
+            <if test="province != '' and province != null ">
+                ,province =#{province}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="provincesModel">
+        update Provinces set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="provincesModel">
+        delete FROM  Provinces where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="provincesModel">
+        <selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Provinces
+        (
+                    id,
+                    provinceid,
+                    province
+        )
+        values
+        (
+                    #{id},
+                    #{provinceid},
+                    #{province}
+        )
+    </insert>
+</mapper>

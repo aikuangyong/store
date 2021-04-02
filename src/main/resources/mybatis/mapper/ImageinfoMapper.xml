@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ImageinfoMapper">
+    <resultMap id="imageinfoMap" type="com.store.model.config.ImageinfoModel">
+        <id column="imgid" property="imgid" javaType="String"/>
+        <result column="src" property="src" javaType="String"/>
+        <result column="imghref" property="imghref" javaType="String"/>
+        <result column="filepath" property="filepath" javaType="String"/>
+        <result column="filetype" property="filetype" javaType="String"/>
+        <result column="filename" property="filename" javaType="String"/>
+        <result column="imggrp" property="imggrp" javaType="String"/>
+        <result column="imageseq" property="imageseq" javaType="Integer"/>
+    </resultMap>
+
+    <select id="getDefaultImg" parameterType="imageinfoModel" resultType="imageinfoModel">
+        SELECT
+        CONCAT(HREF_CNF.href,src) src,
+        src imghref,
+        imggrp,
+        min(imageseq)
+        FROM
+        Imageinfo tbl
+        INNER JOIN ONDOMAIN HREF_CNF ON 1 = 1
+        where 1=1
+        <if test="imgGrpList != null and imgGrpList.size() != 0  ">
+            and imggrp in
+            <foreach collection="imgGrpList" item="grpId" index="no" open="("
+                     separator="," close=")">
+                #{grpId}
+            </foreach>
+        </if>
+        group by src,imggrp
+    </select>
+
+    <select id="getList" parameterType="imageinfoModel" resultType="imageinfoModel">
+        SELECT
+        imgid,
+        CONCAT(HREF_CNF.href,src) src,
+        filepath,
+        filetype,
+        filename,
+        imggrp,
+        imageseq
+        FROM
+        Imageinfo tbl
+        INNER JOIN ONDOMAIN HREF_CNF ON 1 = 1
+        where 1=1
+        <if test="imgid != '' and imgid != null ">
+            and imgid = #{imgid}
+        </if>
+        <if test="src != '' and src != null ">
+            and src = #{src}
+        </if>
+        <if test="filepath != '' and filepath != null ">
+            and filepath = #{filepath}
+        </if>
+        <if test="filetype != '' and filetype != null ">
+            and filetype = #{filetype}
+        </if>
+        <if test="filename != '' and filename != null ">
+            and filename = #{filename}
+        </if>
+        <if test="imgGrpList != null and imgGrpList.size() != 0  ">
+            and imggrp in
+            <foreach collection="imgGrpList" item="grpId" index="no" open="("
+                     separator="," close=")">
+                #{grpId}
+            </foreach>
+        </if>
+        order by imggrp,imageseq asc
+    </select>
+
+    <select id="getCount" parameterType="imageinfoModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Imageinfo
+        where 1=1
+        <if test="imgid != '' and imgid != null ">
+            and imgid = #{imgid}
+        </if>
+        <if test="src != '' and src != null ">
+            and src = #{src}
+        </if>
+        <if test="filepath != '' and filepath != null ">
+            and filepath = #{filepath}
+        </if>
+        <if test="filetype != '' and filetype != null ">
+            and filetype = #{filetype}
+        </if>
+        <if test="filename != '' and filename != null ">
+            and filename = #{filename}
+        </if>
+        <if test="imgGrpList != null and imgGrpList.size() != 0 ">
+            and imggrp in
+            <foreach collection="imgGrpList" item="grpId" index="no" open="("
+                     separator="," close=")">
+                #{grpId}
+            </foreach>
+        </if>
+    </select>
+
+    <update id="update" parameterType="imageinfoModel">
+        update Imageinfo tbl
+        set imgid = imgid
+        <if test="src != '' and src != null ">
+            ,src =#{src}
+        </if>
+        <if test="filepath != '' and filepath != null ">
+            ,filepath =#{filepath}
+        </if>
+        <if test="filetype != '' and filetype != null ">
+            ,filetype =#{filetype}
+        </if>
+        <if test="filename != '' and filename != null ">
+            ,filename =#{filename}
+        </if>
+        where imgid = #{imgid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="imageinfoModel">
+        update Imageinfo set valid = ${valid} where imgid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="imageinfoModel">
+        delete FROM Imageinfo where
+        imgid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="imgid" parameterType="imageinfoModel">
+        <!--<selectKey  keyProperty="imgid" resultType="java.lang.String" order="BEFORE">-->
+        <!--select uuid()-->
+        <!--</selectKey>-->
+        insert into Imageinfo
+        (
+        imgid,
+        src,
+        filepath,
+        filetype,
+        filename,
+        imggrp,
+        imageseq
+        )
+        values
+        (
+        #{imgid},
+        #{src},
+        #{filepath},
+        #{filetype},
+        #{filename},
+        #{imggrp},
+        fn_nextindex('image')
+        )
+    </insert>
+</mapper>

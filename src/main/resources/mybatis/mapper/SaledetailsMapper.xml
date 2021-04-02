@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SaledetailsMapper">
+    <resultMap id="saledetailsMap" type="com.store.model.SaledetailsModel">
+                    <id column="detailid" property="detailid" javaType="String" />
+                    <result column="orderno" property="orderno" javaType="String" />
+                    <result column="nickname" property="nickname" javaType="String" />
+                    <result column="phoneno" property="phoneno" javaType="String" />
+                    <result column="storename" property="storename" javaType="String" />
+                    <result column="bussinestype" property="bussinestype" javaType="String" />
+                    <result column="paytype" property="paytype" javaType="String" />
+                    <result column="bussinesprice" property="bussinesprice" javaType="Double" />
+                    <result column="paytime" property="paytime" javaType="Date" />
+    </resultMap>
+
+    <select id="getList" parameterType="saledetailsModel" resultType="saledetailsModel">
+        SELECT
+        orderno,
+        nickname,
+        phoneno,
+        storename,
+        bussinestype,
+        case when paytype = 1
+        then '支付宝'
+        when paytype = 2
+        then '微信支付'
+        else '打折卡'
+        end as paytype,
+        bussinesprice,
+        paytime
+        FROM
+        (
+            SELECT
+            main_tbl.orderno,
+            user_tbl.nickname,
+            user_tbl.phoneno,
+            store_tbl.storename,
+            '线上' bussinestype,
+            paytype,
+            main_tbl.saleprice AS bussinesprice,
+            paytime
+            FROM orderinfo main_tbl
+            INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+            INNER JOIN orderdetail detail_tbl ON detail_tbl.orderno = main_tbl.orderno
+            INNER JOIN store store_tbl ON store_tbl.storeid = main_tbl.storeid
+            WHERE paytype IS NOT NULL
+            UNION ALL
+            SELECT
+            main_tbl.orderno,
+            user_tbl.nickname,
+            user_tbl.phoneno,
+            storename,
+            '线上' bussinestype,
+            main_tbl.paytype,
+            saleprice AS bussinesprice,
+            paytime
+            FROM  regularorder main_tbl
+            INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+            INNER JOIN regularorderdetail detail_tbl ON detail_tbl.orderid = main_tbl.orderid
+            INNER JOIN (SELECT stid,regularno FROM regularsuborder GROUP BY stid,regularno) sub_order_rbl ON sub_order_rbl.regularno = main_tbl.orderno
+            INNER JOIN store store_tbl ON store_tbl.storeid = sub_order_rbl.stid
+            WHERE main_tbl.paytype IS NOT NULL
+            UNION ALL
+            SELECT
+            orderno,
+            nickname,
+            phoneno,
+            storename,
+            '线下' bussinestype,
+            paytype,
+            bussinesprice,
+            paytime
+            FROM
+            Saledetails tbl
+        ) AS data_tbl
+        where 1=1
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and nickname = #{nickname}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and phoneno = #{phoneno}
+        </if>
+        <if test="storename != '' and storename != null ">
+            and storename = #{storename}
+        </if>
+        <if test="bussinestype != '' and bussinestype != null ">
+            and bussinestype = #{bussinestype}
+        </if>
+        <if test="paytype != '' and paytype != null ">
+            and paytype = #{paytype}
+        </if>
+        <if test="paytime != '' and paytime != null ">
+            and paytime = #{paytime}
+        </if>
+        <if test="startpaytime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(paytime) >= #{startpaytime} ]]>
+        </if>
+        <if test="endpaytime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(paytime) <= #{endpaytime} ]]>
+        </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="saledetailsModel" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        (
+        SELECT
+        main_tbl.orderno,
+        user_tbl.nickname,
+        user_tbl.phoneno,
+        store_tbl.storename,
+        '线上' bussinestype,
+        paytype,
+        main_tbl.saleprice AS bussinesprice,
+        paytime
+        FROM orderinfo main_tbl
+        INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+        INNER JOIN orderdetail detail_tbl ON detail_tbl.orderno = main_tbl.orderno
+        INNER JOIN store store_tbl ON store_tbl.storeid = main_tbl.storeid
+        WHERE paytype IS NOT NULL
+        UNION ALL
+        SELECT
+        main_tbl.orderno,
+        user_tbl.nickname,
+        user_tbl.phoneno,
+        '定期购' storename,
+        '线上' bussinestype,
+        main_tbl.paytype,
+        saleprice AS bussinesprice,
+        paytime
+        FROM  regularorder main_tbl
+        INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+        INNER JOIN regularorderdetail detail_tbl ON detail_tbl.orderid = main_tbl.orderid
+        WHERE main_tbl.paytype IS NOT NULL
+        UNION ALL
+        SELECT
+        orderno,
+        nickname,
+        phoneno,
+        storename,
+        '线下' bussinestype,
+        paytype,
+        bussinesprice,
+        paytime
+        FROM
+        Saledetails tbl
+        ) AS data_tbl
+        where 1=1
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and nickname = #{nickname}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and phoneno = #{phoneno}
+        </if>
+        <if test="storename != '' and storename != null ">
+            and storename = #{storename}
+        </if>
+        <if test="bussinestype != '' and bussinestype != null ">
+            and bussinestype = #{bussinestype}
+        </if>
+        <if test="paytype != '' and paytype != null ">
+            and paytype = #{paytype}
+        </if>
+        <if test="startpaytime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(paytime) >= #{startpaytime} ]]>
+        </if>
+        <if test="endpaytime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(paytime) <= #{endpaytime} ]]>
+        </if>
+    </select>
+
+    <update id="update" parameterType="saledetailsModel" >
+        update Saledetails tbl
+        set detailid = detailid
+            <if test="orderno != '' and orderno != null ">
+                ,orderno =#{orderno}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                ,nickname =#{nickname}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                ,phoneno =#{phoneno}
+            </if>
+            <if test="storename != '' and storename != null ">
+                ,storename =#{storename}
+            </if>
+            <if test="bussinestype != '' and bussinestype != null ">
+                ,bussinestype =#{bussinestype}
+            </if>
+            <if test="paytype != '' and paytype != null ">
+                ,paytype =#{paytype}
+            </if>
+            <if test="bussinesprice != '' and bussinesprice != null ">
+                ,bussinesprice =#{bussinesprice}
+            </if>
+            <if test="paytime != '' and paytime != null ">
+                ,paytime =#{paytime}
+            </if>
+        where detailid = #{detailid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="saledetailsModel">
+        update Saledetails set valid = ${valid} where detailid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="saledetailsModel">
+        delete FROM  Saledetails where
+        detailid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="detailid" parameterType="saledetailsModel">
+        <selectKey  keyProperty="detailid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Saledetails
+        (
+                    detailid,
+                    orderno,
+                    nickname,
+                    phoneno,
+                    storename,
+                    bussinestype,
+                    paytype,
+                    bussinesprice,
+                    paytime
+        )
+        values
+        (
+                    #{detailid},
+                    #{orderno},
+                    #{nickname},
+                    #{phoneno},
+                    #{storename},
+                    #{bussinestype},
+                    #{paytype},
+                    #{bussinesprice},
+                    #{paytime}
+        )
+    </insert>
+</mapper>

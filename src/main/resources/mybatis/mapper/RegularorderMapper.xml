@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RegularorderMapper">
+    <resultMap id="regularorderMap" type="com.store.model.RegularorderModel">
+        <id column="orderid" property="orderid" javaType="String"/>
+        <result column="orderno" property="orderno" javaType="String"/>
+        <result column="userid" property="userid" javaType="String"/>
+        <result column="productname" property="productname" javaType="String"/>
+        <result column="specification" property="specification" javaType="String"/>
+        <result column="price" property="price" javaType="Double"/>
+        <result column="tradetime" property="tradetime" javaType="Date"/>
+        <result column="regularid" property="regularid" javaType="String"/>
+        <result column="addressid" property="addressid" javaType="String"/>
+        <result column="nickname" property="nickname" javaType="String"/>
+        <result column="phoneno" property="phoneno" javaType="String"/>
+        <result column="cardno" property="cardno" javaType="String"/>
+        <result column="paytype" property="paytype" javaType="String"/>
+        <result column="paytime" property="paytime" javaType="String"/>
+    </resultMap>
+
+    <select id="getList" parameterType="regularorderModel" resultType="regularorderModel">
+        SELECT
+            tbl.orderid,
+            tbl.orderno,
+            tbl.userid,
+            tbl.productname,
+            CONCAT(unit,'g','/',sendcount,'次') specification,
+            tbl.price,
+            tbl.tradetime,
+            tbl.regularid,
+            tbl.addressid,
+            user_tbl.nickname,
+            user_tbl.phoneno,
+            tbl.paytype,
+            tbl.paytime,
+            tbl.cardno,
+            detail_tbl.surplus,
+            detail_tbl.saleprice,
+            detail_tbl.orderprice
+        FROM
+          Regularorder tbl
+        INNER JOIN  regularorderdetail detail_tbl ON tbl.`ORDERID` = detail_tbl.`orderid`
+        INNER JOIN customer user_tbl ON user_tbl.`UID` = tbl.`userid`
+        where 1=1
+        <if test="nickname != '' and nickname != null ">
+            and user_tbl.nickname like concat('%',#{nickname},'%')
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and user_tbl.phoneno  like concat('%',#{phoneno},'%')
+        </if>
+        <if test="orderid != '' and orderid != null ">
+            and tbl.orderid = #{orderid}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and tbl.orderno = #{orderno}
+        </if>
+        <if test="begintime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.tradetime) >= UNIX_TIMESTAMP(#{begintime}) ]]>
+        </if>
+        <if test="endtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.tradetime) <= UNIX_TIMESTAMP(#{endtime}) ]]>
+        </if>
+        ORDER BY tbl.tradetime DESC
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="regularorderModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Regularorder tbl
+        INNER JOIN  regularorderdetail detail_tbl ON tbl.`ORDERID` = detail_tbl.`orderid`
+        INNER JOIN customer user_tbl ON user_tbl.`UID` = tbl.`userid`
+        where 1=1
+        <if test="nickname != '' and nickname != null ">
+            and user_tbl.nickname like concat('%',#{nickname},'%')
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and user_tbl.phoneno like concat('%',#{phoneno},'%')
+        </if>
+        <if test="orderid != '' and orderid != null ">
+            and tbl.orderid = #{orderid}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and tbl.orderno = #{orderno}
+        </if>
+    </select>
+
+    <update id="update" parameterType="regularorderModel">
+        update Regularorder tbl
+        set orderid = orderid
+        <if test="orderno != '' and orderno != null ">
+            ,orderno =#{orderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            ,userid =#{userid}
+        </if>
+        <if test="productname != '' and productname != null ">
+            ,productname =#{productname}
+        </if>
+        <if test="specification != '' and specification != null ">
+            ,specification =#{specification}
+        </if>
+        <if test="price != '' and price != null ">
+            ,price =#{price}
+        </if>
+        <if test="tradetime != null ">
+            ,tradetime =#{tradetime}
+        </if>
+        <if test="regularid != '' and regularid != null ">
+            ,regularid =#{regularid}
+        </if>
+        <if test="paytime != '' and paytime != null ">
+            ,paytime =#{paytime}
+        </if>
+        where orderid = #{orderid}
+    </update>
+
+    <update id="updateOrderByPay" parameterType="regularorderModel" >
+        update regularorder tbl set paytype =#{paytype} ,cardno =#{cardno},paytime =#{paytime} where orderno = #{orderno};
+    </update>
+
+    <update id="disableOrEnable" parameterType="regularorderModel">
+        update Regularorder set valid = ${valid} where orderid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="regularorderModel">
+        delete FROM Regularorder where
+        orderid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="orderid" parameterType="regularorderModel">
+        <selectKey keyProperty="orderid" resultType="java.lang.String" order="BEFORE">
+            select MD5(uuid())
+        </selectKey>
+        insert into Regularorder
+        (
+        orderid,
+        orderno,
+        userid,
+        productname,
+        specification,
+        price,
+        tradetime,
+        regularid,
+        addressid,
+        nickname,
+        phoneno,
+        paytype,
+        cardno,
+        paytime
+        )
+        values
+        (
+        #{orderid},
+        #{orderno},
+        #{userid},
+        #{productname},
+        #{specification},
+        #{price},
+        #{tradetime},
+        #{regularid},
+        #{addressid},
+        #{nickname},
+        #{phoneno},
+        #{paytype},
+        #{cardno},
+        #{paytime}
+        )
+    </insert>
+</mapper>

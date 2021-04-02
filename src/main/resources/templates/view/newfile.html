@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>上传文件</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+    </style>
+</head>
+
+<body>
+<div class="admin-main">
+   <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="file.html">附件管理<span class="layui-box">&gt;</span></a><a><cite>上传附件</cite></a></span></p>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">所在派出所</label>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="0">陕西省</option>
+                        <option value="1" selected="">安徽省</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 100px;">
+                    <select name="interest" lay-filter="">
+                        <option value="" ></option>
+                        <option value="0" selected="">全部</option>
+                        <option value="0">西安市</option>
+                        <option value="1" >安康市</option>
+                        <option value="2">商洛市</option>
+                        <option value="3">咸阳市</option>
+                        <option value="4">宝鸡市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 130px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="" selected="">全部</option>
+                        <option value="0">雁塔分局</option>
+                        <option value="1">碑林分局</option>
+                        <option value="2">莲湖分局</option>
+                        <option value="3">咸阳市</option>
+                        <option value="4">宝鸡市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 130px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="" selected="">全部</option>
+                        <option value="0">曲江派出所</option>
+                        <option value="1">锦业路派出所</option>
+                        <option value="2">雁翔路派出所</option>
+                        <option value="3">唐延路派出所</option>
+                        <option value="4">文一路派出所</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">上传附件</label>
+            <div class="layui-input-block" style="width: 80%;">
+                <div id="as" ></div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block"  style="width: 80%;" >
+                <textarea class="layui-textarea" name="content" lay-verify="content"  ></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item" style="margin-top: 30px;">
+            <div class="layui-input-block">
+                <div>
+                    <button class="layui-btn" lay-submit="" lay-filter="branch">确定</button>
+                    <button class="layui-btn layui-btn-primary">返回</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="js/diyUpload/css/webuploader.css">
+<link rel="stylesheet" type="text/css" href="js/diyUpload/css/diyUpload.css">
+<script type="text/javascript" src="js/diyUpload/js/webuploader.html5only.min.js"></script>
+<script type="text/javascript" src="js/diyUpload/js/diyUpload.js"></script>
+<script>
+    layui.use(['form', 'laydate'], function() {
+        var form = layui.form(),
+                layer = layui.layer,
+                laydate = layui.laydate;
+
+
+        //自定义验证规则
+        form.verify({
+            title: function(value) {
+                if(value.length < 4) {
+                    return '标题至少得4个字符啊';
+                }
+            },
+            pass: [/(.+){6,12}$/, '密码必须6到12位'],
+            content: function(value) {
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+
+
+    //上传文件
+    $('#as').diyUpload({
+        url:'server/fileupload.php',
+        success:function( data ) {
+            console.info( data );
+        },
+        error:function( err ) {
+            console.info( err );
+        },
+        buttonText : '选择文件',
+        chunked:true,
+        // 分片大小
+        chunkSize:512 * 1024,
+        //最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
+        fileNumLimit:50,
+        fileSizeLimit:500000 * 1024,
+        fileSingleSizeLimit:50000 * 1024,
+        accept: {}
+    });
+
+
+</script>
+</body>
+
+</html>

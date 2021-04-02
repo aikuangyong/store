@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.VersionmanagerMapper">
+    <resultMap id="versionmanagerMap" type="com.store.model.VersionmanagerModel">
+                    <id column="vid" property="vid" javaType="String" />
+                    <result column="imagegrp" property="imagegrp" javaType="String" />
+                    <result column="apksrc" property="apksrc" javaType="String" />
+                    <result column="versionno" property="versionno" javaType="String" />
+                    <result column="requiredupdate" property="requiredupdate" javaType="Integer" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+    </resultMap>
+
+    <select id="getNewVewsion" parameterType="versionmanagerModel" resultType="versionmanagerModel">
+        SELECT
+          vid,
+          CONCAT(href, imagegrp) imagegrp,
+          CONCAT(href, apksrc) apksrc,
+          versionno,
+          requiredupdate,
+          createtime,
+          seq
+        FROM
+          Versionmanager tbl
+          INNER JOIN ondomain od
+            ON 1 = 1
+        WHERE 1 = 1
+        ORDER BY seq DESC
+        LIMIT 0,1
+    </select>
+
+
+    <select id="getList" parameterType="versionmanagerModel" resultType="versionmanagerModel">
+		SELECT
+            vid,
+            CONCAT(href,imagegrp) imagegrp,
+            CONCAT(href,apksrc) apksrc,
+            versionno,
+            requiredupdate,
+            createtime,
+            seq
+		FROM
+            Versionmanager tbl
+        INNER JOIN ondomain od ON 1=1
+        where 1=1
+            <if test="vid != '' and vid != null ">
+                and vid = #{vid}
+            </if>
+            <if test="imagegrp != '' and imagegrp != null ">
+                and imagegrp = #{imagegrp}
+            </if>
+            <if test="apksrc != '' and apksrc != null ">
+                and apksrc = #{apksrc}
+            </if>
+            <if test="versionno != '' and versionno != null ">
+                and versionno = #{versionno}
+            </if>
+            <if test="requiredupdate != '' and requiredupdate != null ">
+                and requiredupdate = #{requiredupdate}
+            </if>
+            <if test="createtime != '' and createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="versionmanagerModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Versionmanager
+        where 1=1
+            <if test="vid != '' and vid != null ">
+                and vid = #{vid}
+            </if>
+            <if test="imagegrp != '' and imagegrp != null ">
+                and imagegrp = #{imagegrp}
+            </if>
+            <if test="apksrc != '' and apksrc != null ">
+                and apksrc = #{apksrc}
+            </if>
+            <if test="versionno != '' and versionno != null ">
+                and versionno = #{versionno}
+            </if>
+            <if test="requiredupdate != '' and requiredupdate != null ">
+                and requiredupdate = #{requiredupdate}
+            </if>
+            <if test="createtime != '' and createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="versionmanagerModel" >
+        update Versionmanager tbl
+        set vid = vid
+            <if test="imagegrp != '' and imagegrp != null ">
+                ,imagegrp =#{imagegrp}
+            </if>
+            <if test="apksrc != '' and apksrc != null ">
+                ,apksrc =#{apksrc}
+            </if>
+            <if test="versionno != '' and versionno != null ">
+                ,versionno =#{versionno}
+            </if>
+            <if test="requiredupdate != '' and requiredupdate != null ">
+                ,requiredupdate =#{requiredupdate}
+            </if>
+            <if test="createtime != '' and createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where vid = #{vid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="versionmanagerModel">
+        update Versionmanager set valid = ${valid} where vid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="versionmanagerModel">
+        delete FROM  Versionmanager where
+        vid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="vid" parameterType="versionmanagerModel">
+        <selectKey  keyProperty="vid" resultType="java.lang.String" order="BEFORE">
+            select MD5(uuid())
+        </selectKey>
+        insert into Versionmanager
+        (
+                    vid,
+                    imagegrp,
+                    apksrc,
+                    versionno,
+                    requiredupdate,
+                    createtime
+        )
+        values
+        (
+                    #{vid},
+                    #{imagegrp},
+                    #{apksrc},
+                    #{versionno},
+                    #{requiredupdate},
+                    #{createtime}
+        )
+    </insert>
+</mapper>

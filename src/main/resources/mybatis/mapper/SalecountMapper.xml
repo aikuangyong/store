@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SalecountMapper">
+
+    <select id="getList" parameterType="salecountModel" resultType="salecountModel">
+        SELECT
+        detail_tbl.vegetablename as productName,
+        posno as productNo,
+        store_tbl.storename as storeName,
+        store_tbl.storeId as storeId,
+        COUNT(1) AS saleCount,
+        SUM(main_tbl.saleprice) AS salePrice
+        FROM orderinfo main_tbl
+        INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+        INNER JOIN orderdetail detail_tbl ON detail_tbl.orderno = main_tbl.orderno
+        INNER JOIN store store_tbl ON store_tbl.storeid = main_tbl.storeid
+        INNER JOIN vegetable veg_tbl ON veg_tbl.vid = detail_tbl.vegetable
+        WHERE paytype IS NOT NULL AND PAYTIME = PAYTIME
+        <if test="storeId != '' and storeId != null ">
+            and storeid = #{storeId}
+        </if>
+        GROUP BY detail_tbl.vegetablename,posno,store_tbl.storename
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="salecountModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM (
+            SELECT
+            detail_tbl.vegetablename,
+            posno,
+            store_tbl.storename,
+            COUNT(1) AS salecount,
+            SUM(main_tbl.saleprice) AS saleprice
+            FROM orderinfo main_tbl
+            INNER JOIN customer user_tbl ON user_tbl.uid = main_tbl.userid
+            INNER JOIN orderdetail detail_tbl ON detail_tbl.orderno = main_tbl.orderno
+            INNER JOIN store store_tbl ON store_tbl.storeid = main_tbl.storeid
+            INNER JOIN vegetable veg_tbl ON veg_tbl.vid = detail_tbl.vegetable
+            WHERE paytype IS NOT NULL AND PAYTIME = PAYTIME
+            <if test="storeId != '' and storeId != null ">
+                and storeid = #{storeId}
+            </if>
+            GROUP BY detail_tbl.vegetablename,posno,store_tbl.storename
+        ) AS DATA_TBL
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="scid" parameterType="salecountModel">
+        <selectKey  keyProperty="scid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Salecount
+        (
+                    scid,
+                    vegetableid,
+                    storeid,
+                    salatime,
+                    customerid,
+                    price,
+                    createtime
+        )
+        values
+        (
+                    #{scid},
+                    #{vegetableid},
+                    #{storeid},
+                    #{salatime},
+                    #{customerid},
+                    #{price},
+                    #{createtime}
+        )
+    </insert>
+</mapper>

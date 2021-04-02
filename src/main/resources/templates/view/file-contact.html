@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>关联用户</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .site-table td a{ color: #28B779}
+    </style>
+</head>
+<body>
+<div class="admin-main">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="file.html">附件管理<span class="layui-box">&gt;</span></a><a><cite>关联用户</cite></a></span></p>
+    <div class="handle-box">
+        <form class="layui-form">
+            <ul>
+
+                <li class="handle-item layui-clear">
+
+                    <div class="layui-form-item">
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">所属派出所：</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">陕西省</option>
+                                    <option value="1" selected="">安徽省</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value="" ></option>
+                                    <option value="0" selected="">全部</option>
+                                    <option value="0">西安市</option>
+                                    <option value="1" >安康市</option>
+                                    <option value="2">商洛市</option>
+                                    <option value="3">咸阳市</option>
+                                    <option value="4">宝鸡市</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 130px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="" selected="">全部</option>
+                                    <option value="0">雁塔分局</option>
+                                    <option value="1">碑林分局</option>
+                                    <option value="2">莲湖分局</option>
+                                    <option value="3">咸阳市</option>
+                                    <option value="4">宝鸡市</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 130px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="" selected="">全部</option>
+                                    <option value="0">曲江派出所</option>
+                                    <option value="1">锦业路派出所</option>
+                                    <option value="2">雁翔路派出所</option>
+                                    <option value="3">唐延路派出所</option>
+                                    <option value="4">文一路派出所</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">身份证号：</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                                <input type="text" class="layui-input" placeholder="身份证号">
+                            </div>
+                        </div>
+
+
+                        <button class="layui-btn mgl-20" >查询</button>
+
+                    </div>
+                </li>
+
+            </ul>
+        </form>
+    </div>
+
+
+    <table class="site-table table-hover">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>身份证号</th>
+            <th>手机号</th>
+            <th>所属派出所</th>
+            <th>注册日期</th>
+            <th>代办民警</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>张三</td>
+            <td>612430199525475874</td>
+            <td>13669587547</td>
+            <td><a href="" style="color:#01AAED">陕西省西安市雁塔分局曲江派出所</a></td>
+            <td>2016-12-02</td>
+            <td>王晓明</td>
+            <td>
+                <a href="file.html" class="layui-btn layui-btn-warm layui-btn-mini" style="color: #ffffff;">关联</a>
+            </td>
+        </tr>
+        <tr>
+            <td>张三</td>
+            <td>612430199525475874</td>
+            <td>13669587547</td>
+            <td><a  href=""  style="color:#01AAED">陕西省西安市雁塔分局曲江派出所</a></td>
+            <td>2016-12-02</td>
+            <td>王晓明</td>
+            <td>
+                <a href="file.html" class="layui-btn layui-btn-warm layui-btn-mini" style="color: #ffffff;">关联</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="admin-table-page">
+        <div id="page" class="page">
+        </div>
+    </div>
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页操作
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+
+        //列表选择
+        $('.site-table tbody tr').on('click', function(event) {
+            var $this = $(this);
+            var $input = $this.children('td').eq(0).find('input');
+            $input.on('ifChecked', function(e) {
+                $this.css('background-color', '#EEEEEE');
+            });
+            $input.on('ifUnchecked', function(e) {
+                $this.removeAttr('style');
+            });
+            $input.iCheck('toggle');
+        }).find('input').each(function() {
+            var $this = $(this);
+            $this.on('ifChecked', function(e) {
+                $this.parents('tr').css('background-color', '#EEEEEE');
+            });
+            $this.on('ifUnchecked', function(e) {
+                $this.parents('tr').removeAttr('style');
+            });
+        });
+        //全选
+        $('#selected-all').on('ifChanged', function(event) {
+            var $input = $('.site-table tbody tr td').find('input');
+            $input.iCheck(event.currentTarget.checked ? 'check' : 'uncheck');
+        });
+
+
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+
+        //重置密码
+        $(".btn-reset").on('click',function(){
+            layer.confirm('您确定要重置密码吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                //成功返回
+                layer.msg('已重置密码', {icon: 1});
+            }, function(){
+                //失败返回
+                layer.msg('重置失败', {
+                    time: 2000, //2s后自动关闭
+                });
+            });
+        });
+
+
+
+
+    });
+
+
+</script>
+
+</body>
+
+</html>

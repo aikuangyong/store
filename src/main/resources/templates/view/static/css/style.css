@@ -1,0 +1,17 @@
+
+.admin-table-page {
+     position: static;!important;
+    z-index: 19940201;
+     bottom: 0;
+    width: 100%;
+     background-color: #ffffff!important;
+     border-bottom: 1px solid transparent!important;
+    left: 0px;
+}
+.admin-table-page .page {
+    padding-left: 20px;
+    float: right;
+}
+.layui-btn.btn-default {
+    background-color: #28B779;
+}

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.OrderevalMapper">
+    <resultMap id="orderevalMap" type="com.store.model.OrderevalModel">
+                    <id column="evalid" property="evalid" javaType="String" />
+                    <result column="userid" property="userid" javaType="String" />
+                    <result column="evalscore" property="evalscore" javaType="String" />
+                    <result column="evalcontent" property="evalcontent" javaType="String" />
+                    <result column="vegetable" property="vegetable" javaType="String" />
+                    <result column="vegetablename" property="vegetablename" javaType="String" />
+                    <result column="evaltime" property="evaltime" javaType="Date" />
+                    <result column="usericon" property="usericon" javaType="String" />
+                    <result column="vegetableimg" property="vegetableimg" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="nickname" property="nickname" javaType="String" />
+                    <result column="orderno" property="orderno" javaType="String" />
+                    <result column="valid" property="valid" javaType="String" />
+                    <result column="istop" property="istop" javaType="Integer" />
+    </resultMap>
+
+    <select id="getList" parameterType="orderevalModel" resultType="orderevalModel">
+        SELECT
+        evalid,
+        istop,
+        user_tbl.userid,
+        evalscore,
+        evalcontent,
+        vegetable,
+        v_tbl.vegetablename,
+        evaltime,
+        CASE WHEN CONCAT(OD.href, banner_tbl.src) IS NULL
+        THEN CONCAT(OD.href, 'images/default_icon.png')
+        ELSE CONCAT(OD.href, banner_tbl.src)
+        END AS
+        usericon,
+        v_tbl.vegetableimg,
+        user_tbl.nickname nickname,
+        orderno,
+        tbl.valid
+        FROM
+        Ordereval tbl
+        INNER JOIN vegetable v_tbl
+        ON v_tbl.vid = tbl.vegetable
+        INNER JOIN customer user_tbl
+        ON user_tbl.UID = tbl.userid
+        LEFT JOIN
+        (SELECT
+        src,
+        imgid
+        FROM
+        imageinfo) banner_tbl
+        ON banner_tbl.imgid = user_tbl.icon
+        INNER JOIN ONDOMAIN OD
+        ON 1 = 1
+        AND OD.TYPE = 'product'
+        where 1=1
+        <if test="evalid != '' and evalid != null ">
+                and evalid = #{evalid}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and tbl.userid = #{userid}
+            </if>
+            <if test="evalscore != '' and evalscore != null ">
+                and evalscore = #{evalscore}
+            </if>
+            <if test="evalcontent != '' and evalcontent != null ">
+                and evalcontent = #{evalcontent}
+            </if>
+            <if test="vegetable != '' and vegetable != null ">
+                and tbl.vegetable = #{vegetable}
+            </if>
+            <if test="vegetablename != '' and vegetablename != null ">
+                and tbl.vegetablename = #{vegetablename}
+            </if>
+            <if test="evaltime != '' and evaltime != null ">
+                and evaltime = #{evaltime}
+            </if>
+            <if test="usericon != '' and usericon != null ">
+                and usericon = #{usericon}
+            </if>
+            <if test="vegetableimg != '' and vegetableimg != null ">
+                and vegetableimg = #{vegetableimg}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                and user_tbl.nickname like CONCAT('%',#{nickname},'%')
+            </if>
+            <if test="orderno != '' and orderno != null ">
+                and orderno = #{orderno}
+            </if>
+            <if test="valid != '' and valid != null ">
+                and valid = #{valid}
+            </if>
+        ORDER BY istop DESC, tbl.createtime DESC
+        limit ${pageNow},${pageSize}
+	</select>
+    <!--SELECT COUNT(1) FROM Ordereval tbl
+    INNER JOIN vegetable v_tbl ON v_tbl.vid = tbl.vegetable
+    LEFT JOIN customer user_tbl ON user_tbl.UID =tbl.userid
+    INNER JOIN (SELECT src ,imgid FROM imageinfo ) banner_tbl ON banner_tbl.imgid = user_tbl.icon
+    INNER JOIN ONDOMAIN OD ON 1 = 1 AND OD.TYPE = 'product'
+    where 1=1-->
+    <select id="getCount" parameterType="orderevalModel" resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM
+        Ordereval tbl
+        INNER JOIN vegetable v_tbl
+        ON v_tbl.vid = tbl.vegetable
+        INNER JOIN customer user_tbl
+        ON user_tbl.UID = tbl.userid
+        LEFT JOIN
+        (SELECT
+        src,
+        imgid
+        FROM
+        imageinfo) banner_tbl
+        ON banner_tbl.imgid = user_tbl.icon
+        INNER JOIN ONDOMAIN OD
+        ON 1 = 1
+        AND OD.TYPE = 'product'
+        WHERE 1=1
+        <if test="evalid != '' and evalid != null ">
+            and evalid = #{evalid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="evalscore != '' and evalscore != null ">
+            and evalscore = #{evalscore}
+        </if>
+        <if test="evalcontent != '' and evalcontent != null ">
+            and evalcontent = #{evalcontent}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            and vegetable = #{vegetable}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename = #{vegetablename}
+        </if>
+        <if test="evaltime != '' and evaltime != null ">
+            and evaltime = #{evaltime}
+        </if>
+        <if test="usericon != '' and usericon != null ">
+            and usericon = #{usericon}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            and vegetableimg = #{vegetableimg}
+        </if>
+        <if test=" createtime != null ">
+            and createtime = #{createtime}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            and user_tbl.nickname like CONCAT('%',#{nickname},'%')
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and valid = #{valid}
+        </if>
+    </select>
+
+    <update id="clearTop" parameterType="orderevalModel">
+        update ordereval set istop = -1 where vegetable = #{vegetable}
+    </update>
+
+    <update id="update" parameterType="orderevalModel" >
+        update Ordereval tbl
+        set evalid = evalid
+            <if test="userid != '' and userid != null ">
+                ,userid =#{userid}
+            </if>
+            <if test="evalscore != '' and evalscore != null ">
+                ,evalscore =#{evalscore}
+            </if>
+            <if test="evalcontent != '' and evalcontent != null ">
+                ,evalcontent =#{evalcontent}
+            </if>
+            <if test="vegetable != '' and vegetable != null ">
+                ,vegetable =#{vegetable}
+            </if>
+            <if test="vegetablename != '' and vegetablename != null ">
+                ,vegetablename =#{vegetablename}
+            </if>
+            <if test="evaltime != '' and evaltime != null ">
+                ,evaltime =#{evaltime}
+            </if>
+            <if test="usericon != '' and usericon != null ">
+                ,usericon =#{usericon}
+            </if>
+            <if test="vegetableimg != '' and vegetableimg != null ">
+                ,vegetableimg =#{vegetableimg}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+            <if test="nickname != '' and nickname != null ">
+                ,nickname =#{nickname}
+            </if>
+            <if test="orderno != '' and orderno != null ">
+                ,orderno =#{orderno}
+            </if>
+            <if test="istop != '' and istop != null ">
+                ,istop =#{istop}
+            </if>
+            <if test="valid != '' and valid != null ">
+                ,valid =#{valid}
+            </if>
+        where evalid = #{evalid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="orderevalModel">
+        update Ordereval set valid = ${valid} where evalid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="orderevalModel">
+        delete FROM  Ordereval where
+        evalid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="evalid" parameterType="orderevalModel">
+        <selectKey  keyProperty="evalid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Ordereval
+        (
+                    evalid,
+                    userid,
+                    evalscore,
+                    evalcontent,
+                    vegetable,
+                    vegetablename,
+                    evaltime,
+                    usericon,
+                    vegetableimg,
+                    createtime,
+                    nickname,
+                    orderno,
+                    valid,
+                    istop
+        )
+        values
+        (
+                    #{evalid},
+                    #{userid},
+                    #{evalscore},
+                    #{evalcontent},
+                    #{vegetable},
+                    #{vegetablename},
+                    #{evaltime},
+                    #{usericon},
+                    #{vegetableimg},
+                    #{createtime},
+                    #{nickname},
+                    #{orderno},
+                    #{valid},
+                    0
+        )
+    </insert>
+</mapper>

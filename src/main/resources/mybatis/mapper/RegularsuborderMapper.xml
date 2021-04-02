@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.RegularsuborderMapper">
+    <resultMap id="regularsuborderMap" type="com.store.model.RegularsuborderModel">
+        <id column="suborderid" property="suborderid" javaType="String"/>
+        <result column="regularno" property="regularno" javaType="String"/>
+        <result column="suborderno" property="suborderno" javaType="String"/>
+        <result column="userid" property="userid" javaType="String"/>
+        <result column="receivename" property="receivename" javaType="String"/>
+        <result column="receivephone" property="receivephone" javaType="String"/>
+        <result column="unit" property="unit" javaType="String"/>
+        <result column="beginstagetime" property="beginstagetime" javaType="String"/>
+        <result column="endstagetime" property="endstagetime" javaType="String"/>
+        <result column="status" property="status" javaType="String"/>
+        <result column="donetime" property="donetime" javaType="Date"/>
+        <result column="receiveaddress" property="receiveaddress" javaType="String"/>
+        <result column="productname" property="productname" javaType="String"/>
+        <result column="sendtime" property="sendtime" javaType="String"/>
+    </resultMap>
+    
+    <update id="clearRegularOrder" parameterType="java.lang.String">
+        delete from regularorder where userid = #{userid}
+    </update>
+
+    <select id="getMaxSendTimeByUserid" parameterType="regularsuborderModel" resultType="regularsuborderModel">
+        SELECT
+        FROM_UNIXTIME(CONVERT(UNIX_TIMESTAMP(MAX(sendtime)) + 86400 ,SIGNED),'%Y-%m-%d') as sendtime
+        FROM
+        Regularsuborder tbl
+        WHERE 1=1
+        and userid = #{userid}
+        GROUP BY userid
+        ORDER  BY sendtime DESC
+    </select>
+
+    <select id="getList" parameterType="regularsuborderModel" resultType="regularsuborderModel">
+        SELECT
+        tbl.suborderid,
+        regularno,
+        suborderno,
+        userid,
+        receivename,
+        receivephone,
+        unit,
+        beginstagetime,
+        endstagetime,
+        STATUS,
+        donetime,
+        receiveaddress,
+        CASE WHEN product.vegetablename IS NULL
+        THEN '未订购商品'
+        ELSE product.vegetablename
+        END AS productname,
+        sendtime
+        FROM
+        Regularsuborder tbl
+        LEFT JOIN productsuborderlink sublink ON tbl.suborderid = sublink.suborderid
+        LEFT JOIN vegetable product ON product.vid = sublink.vid
+        WHERE 1=1
+        <if test="beginsendtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.sendtime) >= UNIX_TIMESTAMP(#{beginsendtime}) ]]>
+        </if>
+        <if test="endsendtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.sendtime) <= UNIX_TIMESTAMP(#{endsendtime}) ]]>
+        </if>
+        <if test="suborderid != '' and suborderid != null ">
+            and tbl.suborderid = #{suborderid}
+        </if>
+        <if test="regularno != '' and regularno != null ">
+            and regularno = #{regularno}
+        </if>
+        <if test="suborderno != '' and suborderno != null ">
+            and suborderno = #{suborderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="receivename != '' and receivename != null ">
+            and receivename like concat('%',#{receivename},'%')
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            and receivephone = #{receivephone}
+        </if>
+        <if test="unit != '' and unit != null ">
+            and unit = #{unit}
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="donetime != '' and donetime != null ">
+            and donetime = #{donetime}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            and receiveaddress = #{receiveaddress}
+        </if>
+        <if test="productname != '' and productname != null ">
+            and productname = #{productname}
+        </if>
+        <if test="sendtime != '' and sendtime != null ">
+            and sendtime >= #{sendtime}
+        </if>
+        <if test="eqSendTime != '' and eqSendTime != null ">
+            and sendtime = #{eqSendTime}
+        </if>
+        order by sendtime asc
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="regularsuborderModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Regularsuborder tbl
+        where 1=1
+        <if test="beginsendtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.sendtime) >= UNIX_TIMESTAMP(#{beginsendtime}) ]]>
+        </if>
+        <if test="endsendtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.sendtime) <= UNIX_TIMESTAMP(#{endsendtime}) ]]>
+        </if>
+        <if test="suborderid != '' and suborderid != null ">
+            and suborderid = #{suborderid}
+        </if>
+        <if test="regularno != '' and regularno != null ">
+            and regularno = #{regularno}
+        </if>
+        <if test="suborderno != '' and suborderno != null ">
+            and suborderno = #{suborderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="receivename != '' and receivename != null ">
+            and receivename like concat('%',#{receivename},'%')
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            and receivephone = #{receivephone}
+        </if>
+        <if test="unit != '' and unit != null ">
+            and unit = #{unit}
+        </if>
+        <if test="beginstagetime != '' and beginstagetime != null ">
+            and beginstagetime = #{beginstagetime}
+        </if>
+        <if test="endstagetime != '' and endstagetime != null ">
+            and endstagetime = #{endstagetime}
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="donetime != '' and donetime != null ">
+            and donetime = #{donetime}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            and receiveaddress = #{receiveaddress}
+        </if>
+        <if test="productname != '' and productname != null ">
+            and productname = #{productname}
+        </if>
+        <if test="sendtime != '' and sendtime != null ">
+            and sendtime >= #{sendtime}
+        </if>
+    </select>
+
+    <update id="update" parameterType="regularsuborderModel">
+        update Regularsuborder tbl
+        set suborderid = suborderid
+        <if test="regularno != '' and regularno != null ">
+            ,regularno =#{regularno}
+        </if>
+        <if test="suborderno != '' and suborderno != null ">
+            ,suborderno =#{suborderno}
+        </if>
+        <if test="userid != '' and userid != null ">
+            ,userid =#{userid}
+        </if>
+        <if test="receivename != '' and receivename != null ">
+            ,receivename =#{receivename}
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            ,receivephone =#{receivephone}
+        </if>
+        <if test="unit != '' and unit != null ">
+            ,unit =#{unit}
+        </if>
+        <if test="beginstagetime != '' and beginstagetime != null ">
+            ,beginstagetime =#{beginstagetime}
+        </if>
+        <if test="endstagetime != '' and endstagetime != null ">
+            ,endstagetime =#{endstagetime}
+        </if>
+        <if test="status != '' and status != null ">
+            ,status =#{status}
+        </if>
+        <if test="donetime != '' and donetime != null ">
+            ,donetime =#{donetime}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            ,receiveaddress =#{receiveaddress}
+        </if>
+        <if test="productname != '' and productname != null ">
+            ,productname =#{productname}
+        </if>
+        where suborderid = #{suborderid}
+    </update>
+
+    <update id="batchUpdate" parameterType="regularsuborderModel">
+        update Regularsuborder tbl
+        set suborderid = suborderid
+        <if test="suborderno != '' and suborderno != null ">
+            ,suborderno =#{suborderno}
+        </if>
+        <if test="receivename != '' and receivename != null ">
+            ,receivename =#{receivename}
+        </if>
+        <if test="receivephone != '' and receivephone != null ">
+            ,receivephone =#{receivephone}
+        </if>
+        <if test="unit != '' and unit != null ">
+            ,unit =#{unit}
+        </if>
+        <if test="beginstagetime != '' and beginstagetime != null ">
+            ,beginstagetime =#{beginstagetime}
+        </if>
+        <if test="endstagetime != '' and endstagetime != null ">
+            ,endstagetime =#{endstagetime}
+        </if>
+        <if test="status != '' and status != null ">
+            ,status =#{status}
+        </if>
+        <if test="donetime != '' and donetime != null ">
+            ,donetime =#{donetime}
+        </if>
+        <if test="receiveaddress != '' and receiveaddress != null ">
+            ,receiveaddress =#{receiveaddress}
+        </if>
+        <if test="productname != '' and productname != null ">
+            ,productname =#{productname}
+        </if>
+        where sendtime &gt;= #{sendtime} and regularno = #{regularno} and userid = #{userid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="regularsuborderModel">
+        update Regularsuborder set valid = ${valid} where suborderid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <update id="updateSubOrder" parameterType="regularsuborderModel">
+        update Regularsuborder set
+        suborderid = suborderid
+        <if test="productname != '' ">
+            , productname = #{productname}
+        </if>
+        where suborderid = #{suborderid} or suborderno = #{suborderid}
+    </update>
+
+    <delete id="delete" parameterType="regularsuborderModel">
+        delete FROM Regularsuborder where
+        suborderid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="suborderid" parameterType="regularsuborderModel">
+        <selectKey keyProperty="suborderid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Regularsuborder
+        (
+        suborderid,
+        regularno,
+        suborderno,
+        userid,
+        receivename,
+        receivephone,
+        unit,
+        beginstagetime,
+        endstagetime,
+        status,
+        donetime,
+        receiveaddress,
+        productname,
+        sendtime
+        )
+        values
+        (
+        #{suborderid},
+        #{regularno},
+        #{suborderno},
+        #{userid},
+        #{receivename},
+        #{receivephone},
+        #{unit},
+        #{beginstagetime},
+        #{endstagetime},
+        #{status},
+        #{donetime},
+        #{receiveaddress},
+        #{productname},
+        #{sendtime}
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into Regularsuborder
+        (
+            suborderid,
+            regularno,
+            suborderno,
+            userid,
+            receivename,
+            receivephone,
+            unit,
+            beginstagetime,
+            endstagetime,
+            status,
+            donetime,
+            receiveaddress,
+            productname,
+            sendtime,
+            addressid,
+            stid
+        )
+        values
+        <foreach collection="list" item="reddemCode" index="index" separator=",">
+            (
+            #{reddemCode.suborderid},
+            #{reddemCode.regularno},
+            #{reddemCode.suborderno},
+            #{reddemCode.userid},
+            #{reddemCode.receivename},
+            #{reddemCode.receivephone},
+            #{reddemCode.unit},
+            #{reddemCode.beginstagetime},
+            #{reddemCode.endstagetime},
+            #{reddemCode.status},
+            #{reddemCode.donetime},
+            #{reddemCode.receiveaddress},
+            #{reddemCode.productname},
+            #{reddemCode.sendtime},
+            #{reddemCode.addressid},
+            #{reddemCode.stid}
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>统计分析</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+</head>
+<body>
+<div class="admin-main">
+
+    <!-- <p class="page-tab"><span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;"><a href="">首页<span class="layui-box">&gt;</span></a><a><cite>用户列表</cite></a></span></p>-->
+    <div class="handle-box">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: auto;">请选择查询时间维度：</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="radio" name="date" value="年" title="年">
+                        <input type="radio" name="date" value="月" title="月" checked>
+                        <input type="radio" name="date" value="日" title="日">
+                    </div>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" class="layui-input" placeholder="请选择时间"  onclick="layui.laydate({elem: this, istime: true, format: 'YYYY-MM'})">
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: auto;">请选择单位：</label>
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="0">陕西省</option>
+                            <option value="1" selected="">安徽省</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 100px;">
+                        <select name="interest" lay-filter="">
+                            <option value="" ></option>
+                            <option value="0" selected="">全部</option>
+                            <option value="5">西安市</option>
+                            <option value="1" >安康市</option>
+                            <option value="2">商洛市</option>
+                            <option value="3">咸阳市</option>
+                            <option value="4">宝鸡市</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 130px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="" selected="">全部</option>
+                            <option value="0">雁塔分局</option>
+                            <option value="1">碑林分局</option>
+                            <option value="2">莲湖分局</option>
+                            <option value="3">咸阳市</option>
+                            <option value="4">宝鸡市</option>
+                        </select>
+                    </div>
+                    <div class="layui-input-inline"  style="width: 130px;">
+                        <select name="interest" lay-filter="">
+                            <option value=""></option>
+                            <option value="" selected="">全部</option>
+                            <option value="0">曲江派出所</option>
+                            <option value="1">锦业路派出所</option>
+                            <option value="2">雁翔路派出所</option>
+                            <option value="3">唐延路派出所</option>
+                            <option value="4">文一路派出所</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <button class="layui-btn" >查询</button>
+
+            </div>
+
+        </form>
+    </div>
+
+    <div class="layui-clear" style="margin-top: 20px;">
+    <script src="js/echarts.common.min.js"></script>
+    <div style="width: 55%; float: right; border:1px solid #dddddd; " >
+        <div id="main" style="width: 95%; height: 400px; margin: 0 auto; " ></div>
+    </div>
+
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+
+        var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+        option = {
+            color: colors,
+
+            tooltip: {
+                trigger: 'axis'
+            },
+            grid: {
+                right: '20%'
+            },
+            legend: {
+                data:['销量','销售额']
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    data: ['雁塔分局','莲湖分局','未央分局','高新分局','碑林分局']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '销量',
+                    min: 0,
+                    max: 250,
+                    position: 'right',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[0]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value} 个'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '销售额',
+                    min: 0,
+                    max: 2500,
+                    position: 'left',
+                    axisLine: {
+                        lineStyle: {
+                            color: colors[2]
+                        }
+                    },
+                    axisLabel: {
+                        formatter: '{value}元'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name:'销量',
+                    type:'bar',
+                    data:[50,75,25,100,150]
+                },
+                {
+                    name:'销售额',
+                    type:'bar',
+                    yAxisIndex: 1,
+                    data:[1000,1500,1026,350,780]
+                },
+
+            ]
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+    <table class="site-table table-hover" style="width: 40%; float: left; margin-top: 0;">
+        <thead>
+        <tr>
+            <th>充值项目分类</th>
+            <th>销量</th>
+            <th>销售额</th>
+            <th>操作</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>雁塔分局</td>
+            <td>150</td>
+            <td>1350</td>
+            <td>
+                <a href="" class="layui-btn layui-btn-warm layui-btn-mini">详情</a>
+            </td>
+        </tr>
+        <tr>
+            <td>高新分局</td>
+            <td>150</td>
+            <td>1350</td>
+            <td>
+                <a href="" class="layui-btn layui-btn-warm layui-btn-mini">详情</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    </div>
+
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['layer','form','laydate'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+        /*layer = parent.layer === undefined ? layui.layer : parent.layer;*/
+                layer = layui.layer;
+
+
+        //日期选择
+        var laydate = layui.laydate;
+
+        var start = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+
+        var end = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+
+
+        //表格选择
+        $('.site-table tbody tr').on('click', function(event) {
+            var $this = $(this);
+            var $input = $this.children('td').eq(0).find('input');
+            $input.on('ifChecked', function(e) {
+                $this.css('background-color', '#EEEEEE');
+            });
+            $input.on('ifUnchecked', function(e) {
+                $this.removeAttr('style');
+            });
+            $input.iCheck('toggle');
+        }).find('input').each(function() {
+            var $this = $(this);
+            $this.on('ifChecked', function(e) {
+                $this.parents('tr').css('background-color', '#EEEEEE');
+            });
+            $this.on('ifUnchecked', function(e) {
+                $this.parents('tr').removeAttr('style');
+            });
+        });
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            /* layer.alert(JSON.stringify(data.field), {
+             title: '最终的提交信息'
+             })*/
+            layer.msg('已提交审核，请耐心等待', {icon: 1});
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

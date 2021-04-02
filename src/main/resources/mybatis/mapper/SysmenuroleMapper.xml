@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SysmenuroleMapper">
+    <resultMap id="sysmenuroleMap" type="com.store.model.SysmenuroleModel">
+                    <id column="rmid" property="rmid" javaType="String" />
+                    <result column="menuname" property="menuname" javaType="String" />
+                    <result column="menuicon" property="menuicon" javaType="String" />
+                    <result column="parentid" property="parentid" javaType="String" />
+                    <result column="url" property="url" javaType="String" />
+                    <result column="orderseq" property="orderseq" javaType="Integer" />
+                    <result column="roleid" property="roleid" javaType="String" />
+                    <result column="menuid" property="menuid" javaType="String" />
+                    <result column="roledetails" property="roledetails" javaType="String" />
+    </resultMap>
+
+    <select id="getMenuByRole" parameterType="sysmenuroleModel" resultType="sysmenuroleModel">
+        SELECT
+            rmid,
+            MENU.menuname,
+            MENU.menuicon,
+            MENU.parentid,
+            MENU.url,
+            MENU.orderseq,
+            roleid,
+            tbl.menuid,
+            roledetails
+		FROM Sysmenurole tbl
+		INNER JOIN SYSMENU MENU ON TBL.MENUID = MENU.MENUID
+		WHERE ROLEID = #{roleid}
+		order by MENU.orderseq
+    </select>
+
+
+    <select id="getList" parameterType="sysmenuroleModel" resultType="sysmenuroleModel">
+		SELECT
+                    rmid,
+                    menuname,
+                    menuicon,
+                    parentid,
+                    url,
+                    orderseq,
+                    roleid,
+                    menuid,
+                    roledetails
+		FROM
+            Sysmenurole tbl
+        where 1=1
+            <if test="rmid != '' and rmid != null ">
+                and rmid = #{rmid}
+            </if>
+            <if test="menuname != '' and menuname != null ">
+                and menuname = #{menuname}
+            </if>
+            <if test="menuicon != '' and menuicon != null ">
+                and menuicon = #{menuicon}
+            </if>
+            <if test="parentid != '' and parentid != null ">
+                and parentid = #{parentid}
+            </if>
+            <if test="url != '' and url != null ">
+                and url = #{url}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                and orderseq = #{orderseq}
+            </if>
+            <if test="roleid != '' and roleid != null ">
+                and roleid = #{roleid}
+            </if>
+            <if test="menuid != '' and menuid != null ">
+                and menuid = #{menuid}
+            </if>
+            <if test="roledetails != '' and roledetails != null ">
+                and roledetails = #{roledetails}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="sysmenuroleModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Sysmenurole
+        where 1=1
+            <if test="rmid != '' and rmid != null ">
+                and rmid = #{rmid}
+            </if>
+            <if test="menuname != '' and menuname != null ">
+                and menuname = #{menuname}
+            </if>
+            <if test="menuicon != '' and menuicon != null ">
+                and menuicon = #{menuicon}
+            </if>
+            <if test="parentid != '' and parentid != null ">
+                and parentid = #{parentid}
+            </if>
+            <if test="url != '' and url != null ">
+                and url = #{url}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                and orderseq = #{orderseq}
+            </if>
+            <if test="roleid != '' and roleid != null ">
+                and roleid = #{roleid}
+            </if>
+            <if test="menuid != '' and menuid != null ">
+                and menuid = #{menuid}
+            </if>
+            <if test="roledetails != '' and roledetails != null ">
+                and roledetails = #{roledetails}
+            </if>
+    </select>
+
+    <update id="update" parameterType="sysmenuroleModel" >
+        update Sysmenurole tbl
+        set rmid = rmid
+            <if test="menuname != '' and menuname != null ">
+                ,menuname =#{menuname}
+            </if>
+            <if test="menuicon != '' and menuicon != null ">
+                ,menuicon =#{menuicon}
+            </if>
+            <if test="parentid != '' and parentid != null ">
+                ,parentid =#{parentid}
+            </if>
+            <if test="url != '' and url != null ">
+                ,url =#{url}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                ,orderseq =#{orderseq}
+            </if>
+            <if test="roleid != '' and roleid != null ">
+                ,roleid =#{roleid}
+            </if>
+            <if test="menuid != '' and menuid != null ">
+                ,menuid =#{menuid}
+            </if>
+            <if test="roledetails != '' and roledetails != null ">
+                ,roledetails =#{roledetails}
+            </if>
+        where rmid = #{rmid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="sysmenuroleModel">
+        update Sysmenurole set valid = ${valid} where rmid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="sysmenuroleModel">
+        delete FROM  Sysmenurole where
+        rmid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+
+    <delete id="deleteByRoleid" parameterType="sysmenuroleModel">
+        delete FROM  Sysmenurole where
+        roleid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="rmid" parameterType="sysmenuroleModel">
+        <selectKey  keyProperty="rmid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Sysmenurole
+        (
+                    rmid,
+                    menuname,
+                    menuicon,
+                    parentid,
+                    url,
+                    orderseq,
+                    roleid,
+                    menuid,
+                    roledetails
+        )
+        values
+        (
+                    #{rmid},
+                    #{menuname},
+                    #{menuicon},
+                    #{parentid},
+                    #{url},
+                    #{orderseq},
+                    #{roleid},
+                    #{menuid},
+                    #{roledetails}
+        )
+    </insert>
+    
+    
+    <insert id="batchAddRoleMenu" parameterType="sysmenuroleModel">
+      INSERT INTO sysmenurole (rmid,menuname,parentid,orderseq,roleid,menuid,roledetails)
+      SELECT CONCAT(#{roleid},'-',MENUID) rmid,  menuname, parentid,orderseq ,#{roleid} roleid,menuid, 1 roledetails
+      FROM sysmenu
+    </insert>
+</mapper>

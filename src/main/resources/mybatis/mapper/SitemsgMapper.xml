@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SitemsgMapper">
+    <resultMap id="sitemsgMap" type="com.store.model.SitemsgModel">
+                    <id column="msgid" property="msgid" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="msgtitle" property="msgtitle" javaType="String" />
+                    <result column="msgcontent" property="msgcontent" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="sitemsgModel" resultType="sitemsgModel">
+		SELECT
+            msgid,
+            createtime,
+            msgtitle,
+            msgcontent
+		FROM
+            Sitemsg tbl
+        where 1=1
+            <if test="msgid != '' and msgid != null ">
+                and msgid = #{msgid}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="msgtitle != '' and msgtitle != null ">
+                and msgtitle = #{msgtitle}
+            </if>
+            <if test="msgcontent != '' and msgcontent != null ">
+                and msgcontent = #{msgcontent}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="sitemsgModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Sitemsg
+        where 1=1
+            <if test="msgid != '' and msgid != null ">
+                and msgid = #{msgid}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="msgtitle != '' and msgtitle != null ">
+                and msgtitle = #{msgtitle}
+            </if>
+            <if test="msgcontent != '' and msgcontent != null ">
+                and msgcontent = #{msgcontent}
+            </if>
+    </select>
+
+    <update id="update" parameterType="sitemsgModel" >
+        update Sitemsg tbl
+        set msgid = msgid
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+            <if test="msgtitle != '' and msgtitle != null ">
+                ,msgtitle =#{msgtitle}
+            </if>
+            <if test="msgcontent != '' and msgcontent != null ">
+                ,msgcontent =#{msgcontent}
+            </if>
+        where msgid = #{msgid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="sitemsgModel">
+        update Sitemsg set valid = ${valid} where msgid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="sitemsgModel">
+        delete FROM  Sitemsg where
+        msgid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="msgid" parameterType="sitemsgModel">
+        insert into Sitemsg
+        (
+                    msgid,
+                    createtime,
+                    msgtitle,
+                    msgcontent
+        )
+        values
+        (
+                    #{msgid},
+                    #{createtime},
+                    #{msgtitle},
+                    #{msgcontent}
+        )
+    </insert>
+</mapper>

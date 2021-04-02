@@ -1,0 +1,61 @@
+api:
+  mapAk: 2ilOdyI9GdmYVuRNE67Wi1okTMX3PlYC1
+sms:
+  url: https://api.sms.jpush.cn/v1/messages
+  appKey: 2cd88f4fae8d135b2c246345
+  masterSecret: 131de4f6021c4b09d384dccc
+push:
+  url: https://bjapi.push.jiguang.cn/v3/push
+  appKey: b6e4ba5696508f84dece5cc3
+  masterSecret: 92bf33eac0e21074f97dd00d
+spring:
+  profiles: dev
+  generate:
+    outpath: D:\generate
+  freemarker:
+    allow-request-override: false
+    cache: true
+    charset: utf-8
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    content-type: text/html
+    enabled: true
+    encoding: UTF-8
+    mode: LEGACYHTML5
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    url: jdbc:mysql://192.168.2.46:3306/store?characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: zywl!123kj
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+name: 127.0.0.1
+onDomain: http://localhost:88
+excelTemplate: E:\idea\store\src\main\resources\excel-template.xlsx
+verifyImg: D:\workspace\springboot\coding\output\static\verifyImg
+uploadpath: E:\workspace\storeView\upload\
+apiFloder: E:\workspace\storeView\api\
+ueConfig: E:\git\gitee\store\src\main\resources\
+ueditor:
+  config: E:\git\gitee\store\src\main\resources
+mybatis:
+  mapperLocations: classpath:mybatis/mapper/*.xml
+  config: classpath:mybatis/mybatis-config.xml
+  typeAliasesPackage: com.store.model
+server:
+  port: 88

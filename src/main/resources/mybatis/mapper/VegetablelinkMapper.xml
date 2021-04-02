@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.VegetablelinkMapper">
+    <resultMap id="vegetablelinkMap" type="com.store.model.VegetablelinkModel">
+            <id column="vlid" property="vlid" javaType="String" />
+            <result column="vegetable" property="vegetable" javaType="String" />
+            <result column="regular" property="regular" javaType="String" />
+            <result column="configtime" property="configtime" javaType="Date" />
+            <result column="configdate" property="configdate" javaType="String" />
+            <result column="vegetablename" property="vegetablename" javaType="String" />
+            <result column="vid" property="vid" javaType="String" />
+    </resultMap>
+    
+    <select id="getAllRegularProduct" parameterType="vegetablelinkModel" resultType="vegetablelinkModel">
+        SELECT configdate,vegetablename as productname ,vid as productid FROM vegetablelink LINK_TBL
+        INNER JOIN (
+          SELECT MIN(addindex) AS linkIndex FROM vegetablelink GROUP BY configdate
+        ) INDEX_TBL ON LINK_TBL.addindex = index_tbl.linkIndex
+        INNER JOIN VEGETABLE MAIN_TBL ON MAIN_TBL.vid = LINK_TBL.vegetable
+    </select>
+
+
+    <select id="addMenuList" parameterType="vegetablelinkModel" resultType="vegetablelinkModel">
+        SELECT
+            CASE WHEN vlid IS NULL THEN 0 ELSE 1 END islink,
+            CASE WHEN vlid IS NULL THEN -1 ELSE vlid END vlid,
+            VEGE_TBL.vid vegetable,
+            REG_TBL.rid regular,
+            configtime,
+            VEGE_TBL.VEGETABLENAME AS productname,
+            VEGE_TYPE_TBL.VTNAME AS producttype,
+            VEGE_TBL.posno AS posno,
+            VEGE_TBL.price AS price,
+            IMG_SRC imagedata,
+            tbl.createtime createtime,
+            CASE WHEN salecount IS NULL THEN 0 END AS salecount,
+            CASE WHEN saleprice IS NULL THEN 0 END AS saleprice
+        FROM
+        VEGETABLE VEGE_TBL
+        LEFT JOIN (
+        SELECT * FROM Vegetablelink WHERE DATE_FORMAT(configtime,'%Y-%m-%d') = DATE_FORMAT(#{configtime},'%Y-%m-%d')
+        ) tbl ON TBL.vegetable = VEGE_TBL.vid
+        LEFT JOIN VEGETABLETYPE VEGE_TYPE_TBL ON VEGE_TBL.TYPEID = VEGE_TYPE_TBL.VTID
+        LEFT JOIN REGULAR REG_TBL ON TBL.REGULAR = REG_TBL.RID
+        LEFT JOIN
+        (SELECT COUNT(1) AS salecount,SUM(price) AS saleprice, vegetableid FROM salecount GROUP BY vegetableid) SALE_TBL
+        ON SALE_TBL.vegetableid = tbl.vegetable
+        LEFT JOIN
+        (SELECT IMGGRP, GROUP_CONCAT(SRC)  AS IMG_SRC FROM IMAGEINFO GROUP BY IMGGRP)
+        IMG ON VEGE_TBL.vegetableimg = IMG.IMGGRP
+        where 1=1
+        <if test="productname != '' and productname != null ">
+            and VEGETABLENAME like CONCAT('%',#{productname},'%')
+        </if>
+        ORDER BY VEGE_TBL.VEGETABLENAME asc, configtime ASC
+        LIMIT 0,15
+    </select>
+
+    <select id="addMenuListCount" parameterType="vegetablelinkModel" resultType="java.lang.Integer">
+        SELECT
+          count(1)
+        FROM
+        VEGETABLE VEGE_TBL
+        LEFT JOIN (
+        SELECT * FROM Vegetablelink WHERE DATE_FORMAT(configtime,'%Y-%m-%d') = DATE_FORMAT(#{configtime},'%Y-%m-%d')
+        ) tbl ON TBL.vegetable = VEGE_TBL.vid
+        LEFT JOIN VEGETABLETYPE VEGE_TYPE_TBL ON VEGE_TBL.TYPEID = VEGE_TYPE_TBL.VTID
+        LEFT JOIN REGULAR REG_TBL ON TBL.REGULAR = REG_TBL.RID
+        LEFT JOIN
+        (SELECT COUNT(1) AS salecount,SUM(price) AS saleprice, vegetableid FROM salecount GROUP BY vegetableid) SALE_TBL
+        ON SALE_TBL.vegetableid = tbl.vegetable
+        LEFT JOIN
+        (SELECT IMGGRP, GROUP_CONCAT(SRC)  AS IMG_SRC FROM IMAGEINFO GROUP BY IMGGRP)
+        IMG ON VEGE_TBL.vegetableimg = IMG.IMGGRP
+        where 1=1
+        <if test="productname != '' and productname != null ">
+            and VEGETABLENAME like CONCAT('%',#{productname},'%')
+        </if>
+        ORDER BY configtime ASC
+        LIMIT 0,15
+    </select>
+
+
+    <select id="getList" parameterType="vegetablelinkModel" resultType="vegetablelinkModel">
+        SELECT
+        vlid,
+        CASE WHEN vlid IS NULL THEN 0 ELSE 1 END islink,
+        vegetable,
+        regular,
+        configtime,
+        configdate,
+        VEGE_TBL.VEGETABLENAME AS productname,
+        VEGE_TYPE_TBL.VTNAME AS producttype,
+        IMG_SRC imagedata,
+        tbl.createtime createtime
+        FROM
+        VEGETABLE VEGE_TBL
+        INNER JOIN (
+          SELECT * FROM Vegetablelink
+        ) tbl ON TBL.vegetable = VEGE_TBL.vid
+        INNER JOIN VEGETABLETYPE VEGE_TYPE_TBL ON VEGE_TBL.TYPEID = VEGE_TYPE_TBL.VTID
+        INNER JOIN REGULAR REG_TBL ON TBL.REGULAR = REG_TBL.RID
+        INNER JOIN
+        (SELECT IMGGRP, GROUP_CONCAT(SRC)  AS IMG_SRC FROM IMAGEINFO GROUP BY IMGGRP)
+        IMG ON VEGE_TBL.vegetableimg = IMG.IMGGRP
+        where 1=1
+        <if test="vlid != null and vlid != '' ">
+            and vlid = #{vlid}
+        </if>
+        <if test="beginconfigtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.configtime) >= UNIX_TIMESTAMP(#{beginconfigtime}) ]]>
+        </if>
+        <if test="endconfigtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.configtime) <= UNIX_TIMESTAMP(#{endconfigtime}) ]]>
+        </if>
+        order by configtime asc
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="vegetablelinkModel" resultType="java.lang.Integer">
+        SELECT
+          count(1)
+        FROM
+        VEGETABLE VEGE_TBL
+        INNER JOIN (
+        SELECT * FROM Vegetablelink
+        ) tbl ON TBL.vegetable = VEGE_TBL.vid
+        INNER JOIN VEGETABLETYPE VEGE_TYPE_TBL ON VEGE_TBL.TYPEID = VEGE_TYPE_TBL.VTID
+        INNER JOIN REGULAR REG_TBL ON TBL.REGULAR = REG_TBL.RID
+        INNER JOIN
+        (SELECT IMGGRP, GROUP_CONCAT(SRC)  AS IMG_SRC FROM IMAGEINFO GROUP BY IMGGRP)
+        IMG ON VEGE_TBL.vegetableimg = IMG.IMGGRP
+        where 1=1
+        <if test="vlid != null and vlid != '' ">
+            and vlid = #{vlid}
+        </if>
+        <if test="beginconfigtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.configtime) >= UNIX_TIMESTAMP(#{beginconfigtime}) ]]>
+        </if>
+        <if test="endconfigtime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.configtime) <= UNIX_TIMESTAMP(#{endconfigtime}) ]]>
+        </if>
+    </select>
+
+    <update id="update" parameterType="vegetablelinkModel" >
+        update Vegetablelink tbl
+        set vlid = vlid
+            <if test="vegetable != '' and vegetable != null ">
+                ,vegetable =#{vegetable}
+            </if>
+            <if test="regular != '' and regular != null ">
+                ,regular =#{regular}
+            </if>
+            <if test="configtime != '' and configtime != null ">
+                ,configtime =#{configtime}
+            </if>
+        where vlid = #{vlid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="vegetablelinkModel">
+        update Vegetablelink set valid = ${valid} where vlid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="vegetablelinkModel">
+        delete FROM  Vegetablelink where
+        vlid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="vlid" parameterType="vegetablelinkModel">
+        <selectKey  keyProperty="vlid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Vegetablelink
+        (
+            vlid,
+            vegetable,
+            regular,
+            configtime,
+            configdate,
+            createtime,
+            addindex
+        )
+        values
+        (
+            #{vlid},
+            #{vegetable},
+            #{regular},
+            #{configtime},
+            DATE_FORMAT(#{configtime},'%Y-%m-%d'),
+            #{createtime},
+            fn_nextindex('regular')
+        )
+    </insert>
+</mapper>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Table</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <style>
+        /* overview.css */
+        body{ font-family: "microsoft yahei", "Tahoma", "simsun", "Verdana", "Arial", "Helvetica"}
+        .state-overview .symbol,.state-overview .value{display:inline-block;text-align:center;}
+        .state-overview .value{float:right;}
+        .state-overview .value h1,.state-overview .value p{margin:0;padding:0;color:#979DAF;font-family: Arial,Helvetica,sans-serif;}
+        .state-overview .value:hover h1,.state-overview .value:hover p{color:#A7ACBB;}
+        .state-overview .value h1{font-weight:300;}
+        .state-overview .symbol i{color:#fff;font-size:50px;}
+        .state-overview .symbol{width:40%;padding:25px 50px;-webkit-border-radius:4px 0px 0px 4px;border-radius:4px 0px 0px 4px;}
+        .state-overview .value{width:58%;padding-top:21px;}
+        .state-overview .userblue{background:#54ade8;}
+        .state-overview .commred{background:#ff6c60;}
+        .state-overview .articlegreen{background:#4dccb3;}
+        .state-overview .rsswet{background:#6385a7;}
+    </style>
+
+</head>
+
+<body style="background:#f2f2f2;">
+<div class="admin-main" >
+
+    <div class="row state-overview">
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol userblue"> <i class="fa fa-user-circle"></i>
+                </div>
+                <div class="value">
+                    <a href="#">
+                        <h1 id="count1">10</h1>
+                    </a>
+                    <p>用户总量</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol commred"> <i class="fa fa-eercast"></i>
+                </div>
+                <div class="value">
+                    <a href="#">
+                        <h1 id="count2">1</h1>
+                    </a>
+                    <p>备案登记总数</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol articlegreen">
+                    <i class="fa fa-eercast"></i>
+                </div>
+                <div class="value">
+                    <a href="#">
+                        <h1 id="count3">50</h1>
+                    </a>
+                    <p>公告总数</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol rsswet">
+                    <i class="fa fa-eercast"></i>
+                </div>
+                <div class="value">
+                    <a href="#">
+                        <h1 id="count4">0</h1>
+                    </a>
+                    <p>模板总数</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6" >
+            <section class="panel" style=" margin:20px;background: #ffffff;">
+                <header class="panel-heading bm0">
+                    <span class="span-title">系统概览</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div class="panel-body" style="display: block;">
+                      <p>版本信息： 版本名称：LarryCMS </p>
+                    <p>版本信息： 版本名称：LarryCMS </p>
+                    <p>网站域名：未定义</p>
+                   <p>网站目录：未定义</p>
+                    <p>服务器IP：未定义</p>
+                    <p>服务器环境：未定义</p>
+                   <p>数据库版本： 未定义</p>
+                    <p>最大上传限制： 未定义</p>
+                    <p>当前登录用户： 未定义</p>
+                </div>
+            </section>
+            <section class="panel" style=" margin:20px;background: #ffffff;">
+                <header class="panel-heading bm0">
+                    <span class="span-title">充值产品类别统计</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <div id="main1" style="width: 95%; height: 350px; margin: 0 auto; " ></div>
+                <script src="js/echarts.common.min.js"></script>
+                <script type="text/javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('main1'));
+
+
+                    var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+                    option = {
+                        color: colors,
+
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        grid: {
+                            right: '20%'
+                        },
+                        legend: {
+                            data:['销量','销售额']
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                axisTick: {
+                                    alignWithLabel: true
+                                },
+                                data: ['分类1','分类2','分类3','分类4','分类5']
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '销量',
+                                min: 0,
+                                max: 250,
+                                position: 'right',
+                                axisLine: {
+                                    lineStyle: {
+                                        color: colors[0]
+                                    }
+                                },
+                                axisLabel: {
+                                    formatter: '{value} 个'
+                                }
+                            },
+                            {
+                                type: 'value',
+                                name: '销售额',
+                                min: 0,
+                                max: 2500,
+                                position: 'left',
+                                axisLine: {
+                                    lineStyle: {
+                                        color: colors[2]
+                                    }
+                                },
+                                axisLabel: {
+                                    formatter: '{value}元'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name:'销量',
+                                type:'bar',
+                                data:[50,75,25,100,150]
+                            },
+                            {
+                                name:'销售额',
+                                type:'bar',
+                                yAxisIndex: 1,
+                                data:[1000,1500,1026,350,780]
+                            },
+
+                        ]
+                    };
+
+
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                </script>
+            </section>
+
+        </div>
+        <div class="col-md-6" >
+            <section class="panel" style=" margin:20px;background: #ffffff;">
+                <div class="panel-body" style="display: block;">
+                    <div id="main" style="width: 95%; height: 350px; margin: 0 auto; " ></div>
+                    <script src="js/echarts.common.min.js"></script>
+                    <script type="text/javascript">
+                        // 基于准备好的dom，初始化echarts实例
+                        var myChart = echarts.init(document.getElementById('main'));
+
+
+                        var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+                        option = {
+                            title : {
+                                text: '备案统计',
+                                x:'center'
+                            },
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            color:['#5793f3', '#d14a61', '#675bba'],
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                                data: ['购买保险','备案统计']
+                            },
+                            series : [
+                                {
+                                    name: '访问来源',
+                                    type: 'pie',
+                                    radius : '55%',
+                                    center: ['50%', '60%'],
+                                    data:[
+                                        {value:335, name:'购买保险'},
+                                        {value:310, name:'备案统计'},
+
+                                    ],
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    </script>
+                </div>
+            </section>
+
+            <section class="panel" style=" margin:20px;background: #ffffff;">
+                <header class="panel-heading bm0">
+                    <span class="span-title">最新公告</span>
+                    <span class="tools pull-right"><a href="javascript:;" class="iconpx-chevron-down"></a></span>
+                </header>
+                <table class="site-table table-hover">
+                    <thead>
+                    <tr>
+                        <th>公告标题</th>
+                        <th>创建人</th>
+                        <th>创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+
+                    </tr>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+
+
+                    </tr>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+
+                    </tr>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+
+
+                    </tr>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+                    </tr>
+                    <tr>
+                        <td>关于电动自行车备案新规定公告</td>
+                        <td>李四</td>
+                        <td>2016-12-28</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </section>
+
+        </div>
+    </div>
+
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+        /*layer = parent.layer === undefined ? layui.layer : parent.layer;*/
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+        //新增分局弹框
+        $("#btn-addbranch").on('click',function(){
+            layer.open({
+                type: 2,
+                title: '添加分局',
+                fix: false,
+                maxmin: true,
+                shadeClose: true,
+                area: ['700px', '350px'],
+                content: 'newBranch.html',
+                end: function(){
+                    //layer.tips('Hi', '#about', {tips: 1})
+                }
+            });
+        });
+
+        //表格选择
+        $('.site-table tbody tr').on('click', function(event) {
+            var $this = $(this);
+            var $input = $this.children('td').eq(0).find('input');
+            $input.on('ifChecked', function(e) {
+                $this.css('background-color', '#EEEEEE');
+            });
+            $input.on('ifUnchecked', function(e) {
+                $this.removeAttr('style');
+            });
+            $input.iCheck('toggle');
+        }).find('input').each(function() {
+            var $this = $(this);
+            $this.on('ifChecked', function(e) {
+                $this.parents('tr').css('background-color', '#EEEEEE');
+            });
+            $this.on('ifUnchecked', function(e) {
+                $this.parents('tr').removeAttr('style');
+            });
+        });
+        //全选
+        $('#selected-all').on('ifChanged', function(event) {
+            var $input = $('.site-table tbody tr td').find('input');
+            $input.iCheck(event.currentTarget.checked ? 'check' : 'uncheck');
+        });
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.LoopinfoMapper">
+    <resultMap id="loopinfoMap" type="com.store.model.LoopinfoModel">
+                    <id column="loopid" property="loopid" javaType="String" />
+                    <result column="loopname" property="loopname" javaType="String" />
+                    <result column="position" property="position" javaType="String" />
+                    <result column="imagesrc" property="imagesrc" javaType="String" />
+                    <result column="looptype" property="looptype" javaType="String" />
+                    <result column="loopcontent" property="loopcontent" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="loopseq" property="loopseq" javaType="Integer" />
+    </resultMap>
+
+    <select id="getList" parameterType="loopinfoModel" resultType="loopinfoModel">
+		SELECT
+                    loopid,
+                    loopname,
+                    position,
+                    imagesrc,
+                    CONCAT(HREF_CNF.HREF,src) as showsrc,
+                    looptype,
+                    loopcontent,
+                    createtime,
+                    loopseq
+		FROM
+            Loopinfo tbl
+        INNER JOIN (SELECT src ,imgid from imageinfo ) banner_tbl on banner_tbl.imgid = tbl.imagesrc
+        INNER JOIN ONDOMAIN HREF_CNF ON 1 = 1 AND HREF_CNF.TYPE = 'product'
+        where 1=1
+            <if test="loopid != '' and loopid != null ">
+                and loopid = #{loopid}
+            </if>
+            <if test="loopname != '' and loopname != null ">
+                and loopname = #{loopname}
+            </if>
+            <if test="position != '' and position != null ">
+                and position = #{position}
+            </if>
+            <if test="imagesrc != '' and imagesrc != null ">
+                and imagesrc = #{imagesrc}
+            </if>
+            <if test="looptype != '' and looptype != null ">
+                and looptype = #{looptype}
+            </if>
+            <if test="loopcontent != '' and loopcontent != null ">
+                and loopcontent = #{loopcontent}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="loopinfoModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Loopinfo
+        where 1=1
+            <if test="loopid != '' and loopid != null ">
+                and loopid = #{loopid}
+            </if>
+            <if test="loopname != '' and loopname != null ">
+                and loopname = #{loopname}
+            </if>
+            <if test="position != '' and position != null ">
+                and position = #{position}
+            </if>
+            <if test="imagesrc != '' and imagesrc != null ">
+                and imagesrc = #{imagesrc}
+            </if>
+            <if test="looptype != '' and looptype != null ">
+                and looptype = #{looptype}
+            </if>
+            <if test="loopcontent != '' and loopcontent != null ">
+                and loopcontent = #{loopcontent}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="loopinfoModel" >
+        update Loopinfo tbl
+        set loopid = loopid
+            <if test="loopname != '' and loopname != null ">
+                ,loopname =#{loopname}
+            </if>
+            <if test="position != '' and position != null ">
+                ,position =#{position}
+            </if>
+            <if test="imagesrc != '' and imagesrc != null ">
+                ,imagesrc =#{imagesrc}
+            </if>
+            <if test="looptype != '' and looptype != null ">
+                ,looptype =#{looptype}
+            </if>
+            <if test="loopcontent != '' and loopcontent != null ">
+                ,loopcontent =#{loopcontent}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where loopid = #{loopid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="loopinfoModel">
+        update Loopinfo set valid = ${valid} where loopid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="loopinfoModel">
+        delete FROM  Loopinfo where
+        loopid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="loopid" parameterType="loopinfoModel">
+        <selectKey  keyProperty="loopid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Loopinfo
+        (
+            loopid,
+            loopname,
+            position,
+            imagesrc,
+            looptype,
+            loopcontent,
+            createtime,
+            loopseq
+        )
+        values
+        (
+            #{loopid},
+            #{loopname},
+            #{position},
+            #{imagesrc},
+            #{looptype},
+            #{loopcontent},
+            #{createtime},
+            fn_nextindex('loopinfo')
+        )
+    </insert>
+</mapper>

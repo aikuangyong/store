@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.OrderdetailMapper">
+    <resultMap id="orderdetailMap" type="com.store.model.OrderdetailModel">
+        <id column="detailid" property="detailid" javaType="String"/>
+        <result column="vegetable" property="vegetable" javaType="String"/>
+        <result column="vegetablename" property="vegetablename" javaType="String"/>
+        <result column="imagesrc" property="imagesrc" javaType="String"/>
+        <result column="salecount" property="salecount" javaType="Integer"/>
+        <result column="saleprice" property="saleprice" javaType="Double"/>
+        <result column="orderno" property="orderno" javaType="String"/>
+        <result column="producecontent" property="producecontent" javaType="String"/>
+    </resultMap>
+
+    <select id="getList" parameterType="orderdetailModel" resultType="orderdetailModel">
+        SELECT
+            detailid,
+            vegetable,
+            vegetablename,
+            imagesrc,
+            salecount,
+            saleprice,
+            paidprice,
+            orderno,
+            producecontent
+        FROM
+        Orderdetail tbl
+        where 1=1
+        <if test="detailid != '' and detailid != null ">
+            and detailid = #{detailid}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            and vegetable = #{vegetable}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename = #{vegetablename}
+        </if>
+        <if test="imagesrc != '' and imagesrc != null ">
+            and imagesrc = #{imagesrc}
+        </if>
+        <if test="salecount != '' and salecount != null ">
+            and salecount = #{salecount}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            and saleprice = #{saleprice}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="orderdetailModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Orderdetail
+        where 1=1
+        <if test="detailid != '' and detailid != null ">
+            and detailid = #{detailid}
+        </if>
+        <if test="vegetable != '' and vegetable != null ">
+            and vegetable = #{vegetable}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename = #{vegetablename}
+        </if>
+        <if test="imagesrc != '' and imagesrc != null ">
+            and imagesrc = #{imagesrc}
+        </if>
+        <if test="salecount != '' and salecount != null ">
+            and salecount = #{salecount}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            and saleprice = #{saleprice}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+    </select>
+
+    <update id="update" parameterType="orderdetailModel">
+        update Orderdetail tbl
+        set detailid = detailid
+        <if test="vegetable != '' and vegetable != null ">
+            ,vegetable =#{vegetable}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            ,vegetablename =#{vegetablename}
+        </if>
+        <if test="imagesrc != '' and imagesrc != null ">
+            ,imagesrc =#{imagesrc}
+        </if>
+        <if test="salecount != '' and salecount != null ">
+            ,salecount =#{salecount}
+        </if>
+        <if test="saleprice != '' and saleprice != null ">
+            ,saleprice =#{saleprice}
+        </if>
+        <if test="paidprice != '' and paidprice != null ">
+            ,paidprice =#{paidprice}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            ,orderno =#{orderno}
+        </if>
+        where detailid = #{detailid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="orderdetailModel">
+        update Orderdetail set valid = ${valid} where detailid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="orderdetailModel">
+        delete FROM Orderdetail where
+        detailid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="detailid" parameterType="orderdetailModel">
+        <selectKey keyProperty="detailid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Orderdetail
+        (
+            detailid,
+            vegetable,
+            vegetablename,
+            imagesrc,
+            salecount,
+            saleprice,
+            paidprice,
+            orderno,
+            producecontent
+        )
+        values
+        (
+            #{detailid},
+            #{vegetable},
+            #{vegetablename},
+            #{imagesrc},
+            #{salecount},
+            #{saleprice},
+            #{paidprice},
+            #{orderno},
+            #{producecontent}
+        )
+    </insert>
+</mapper>

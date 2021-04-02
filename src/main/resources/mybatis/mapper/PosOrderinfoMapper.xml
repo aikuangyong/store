@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.store.dao.PosOrderinfoMapper">
+    <resultMap id="orderinfoMap" type="com.store.api.pos.model.Param.PosOrderInfo">
+        <id column="orderid" property="order_id" javaType="String"/>
+        <result column="orderno" property="order_no" javaType="String"/>
+        <result column="orderno" property="order_price" javaType="String"/>
+        <result column="saleprice" property="sale_price" javaType="String"/>
+        <result column="poseno" property="store_code" javaType="String"/>
+        <result column="storename" property="store_name" javaType="String"/>
+        <result column="vegetablename" property="goods_name" javaType="String"/>
+        <result column="imagesrc" property="goods_img" javaType="String"/>
+        <result column="salecount" property="goods_count" javaType="String"/>
+        <result column="vegetableprice" property="goods_price" javaType="String"/>
+        <result column="goodsno" property="goods_code" javaType="String"/>
+        <result column="orderstatus" property="order_status" javaType="String"/>
+        <result column="paytype" property="pay_type" javaType="String"/>
+        <result column="sendtype" property="send_type" javaType="String"/>
+        <result column="createtime" property="create_time" javaType="String"/>
+        <result column="paytime" property="pay_time" javaType="String"/>
+        <result column="nickname" property="nick_name" javaType="String"/>
+        <result column="phoneno" property="phoneno" javaType="String"/>
+        <result column="sendinfo" property="remark" javaType="String"/>
+    </resultMap>
+
+
+    <select id="getOrderDetail" parameterType="queryPosModel" resultType="com.store.api.pos.model.Param.PosOrderDetail">
+        SELECT
+            rs_tbl.receivename receive_name,
+            rs_tbl.receivephone receive_phone,
+            rs_tbl.receiveaddress receive_address,
+            CONCAT(rs_tbl.unit,'g') AS goods_specification,
+            goods.vegetablename AS goods_name,
+            CONCAT(beginstagetime,'-',endstagetime) send_time,
+            sendtime send_date,
+            1 AS send_num,
+            st_tbl.storename store_name,
+            suborderno order_no,
+            detail_tbl.content description,
+            goods.vegetablename goods_name
+        FROM
+          regularsuborder rs_tbl
+        INNER JOIN store st_tbl ON rs_tbl.stid = st_tbl.storeid
+        INNER JOIN regularorder order_tbl ON rs_tbl.regularno = order_tbl.orderno
+        INNER JOIN regularorderdetail detail_tbl ON detail_tbl.orderid = order_tbl.orderid
+        INNER JOIN productsuborderlink link ON link.suborderid = rs_tbl.suborderid
+        INNER JOIN vegetable goods ON goods.vid = link.vid
+        WHERE 1=1
+        <if test="orderId != '' and orderId != null">
+        AND rs_tbl.suborderid = #{orderId}
+        </if>
+    </select>
+
+    <select id="getOrderIdList" parameterType="queryPosModel" resultType="java.lang.String">
+        SELECT
+          suborderid
+        FROM
+          regularsuborder suborder
+        INNER JOIN store st ON st.storeid = suborder.stid
+        WHERE sendtime = '2018-11-19'
+        AND STATUS = 1 AND st.poseno = #{shopId}
+    </select>
+
+    <select id="getList" parameterType="queryPosModel" resultMap="orderinfoMap">
+        SELECT
+            orderid,
+            tbl_info.orderno,
+            tbl_info.orderprice,
+            tbl_info.saleprice,
+            tbl_store.poseno,
+            tbl_store.storename,
+            tbl_detail.vegetablename,
+            tbl_detail.saleprice vegetableprice,
+            tbl_detail.posno goodsno,
+            tbl_detail.imagesrc,
+            tbl_detail.salecount,
+            tbl_info.orderstatus,
+            tbl_info.paytype,
+            tbl_info.sendtype,
+            tbl_info.sendinfo ,
+            DATE_FORMAT(tbl_info.createtime,'%Y-%M-%D %H:%i:%S') as createtime,
+            DATE_FORMAT(tbl_info.paytime,'%Y-%M-%D %H:%i:%S') as paytime,
+            tbl_user.nickname,
+            tbl_user.phoneno
+        FROM orderinfo tbl_info
+        INNER JOIN
+        (
+            SELECT
+            orderno,detail.VEGETABLENAME,IMAGESRC,SALEPRICE,v_tbl.posno,COUNT(1) AS salecount
+            FROM orderdetail detail
+            INNER JOIN vegetable v_tbl ON detail.vegetable = v_tbl.vid
+            GROUP BY orderno,detail.VEGETABLENAME,IMAGESRC,SALEPRICE
+        )
+        tbl_detail ON tbl_info.orderno = tbl_detail.orderno
+        INNER JOIN store tbl_store ON tbl_info.storeid = tbl_store.storeid
+        INNER JOIN customer tbl_user ON tbl_info.userid = tbl_user.UID
+        order by tbl_info.createtime desc
+        where 1=1
+        <if test="mobile != '' and mobile != null ">
+            and mobile = #{mobile}
+        </if>
+        <if test="store_code != '' and store_code != null ">
+            and tbl_detail.posno = #{store_code}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="queryPosModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM
+        (
+            SELECT
+              tbl.orderno
+            FROM Orderinfo tbl
+            INNER JOIN customer user_tbl ON tbl.userid = user_tbl.uid
+            INNER JOIN (SELECT storeid sid,storename sname ,storephone sphone ,storeaddress saddress FROM store) store_tbl
+            ON tbl.storeid = store_tbl.sid
+            where 1=1
+            <if test="mobile != '' and mobile != null ">
+                and mobile = #{mobile}
+            </if>
+            <if test="store_code != '' and store_code != null ">
+                and tbl_detail.posno = #{store_code}
+            </if>
+            group by tbl.orderno
+        ) as data_tbl
+    </select>
+
+</mapper>

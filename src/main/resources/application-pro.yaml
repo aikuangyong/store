@@ -1,0 +1,58 @@
+api:
+  mapAk: 2ilOdyI9GdmYVuRNE67Wi1okTMX3PlYC
+sms:
+  url: https://api.sms.jpush.cn/v1/messages
+  appKey: 2cd88f4fae8d135b2c246345
+  masterSecret: 131de4f6021c4b09d384dccc
+push:
+  url: https://bjapi.push.jiguang.cn/v3/push
+  appKey: b6e4ba5696508f84dece5cc3
+  masterSecret: 92bf33eac0e21074f97dd00d
+spring:
+  profiles: pro
+  generate:
+    outpath: D:\generate
+  thymeleaf:
+    cache: true
+    check-template-location: true
+    content-type: text/html
+    enabled: true
+    encoding: UTF-8
+    mode: LEGACYHTML5
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    name: test
+    url: jdbc:mysql://47.99.127.65:3306/store?characterEncoding=utf8
+    username: root
+    password: zywl!123kj
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+name: wanghaojie
+onDomain: http://www.coding88.com/
+excelTemplate: E:\idea\store\src\main\resources\excel-template.xlsx
+verifyImg: D:\workspace\springboot\coding\output\static\verifyImg
+uploadpath: /home/www/webapps/upload/
+templatePath: /usr/local/apache-tomcat-8.5.31/webapps/blog/WEB-INF/classes/templates/
+outPath: E:\node_space\vuespace\blog\article\
+apiFloder: E:\workspace\storeView\api\
+ueConfig: /usr/local/apache-tomcat-8.5.31/webapps/store/WEB-INF/classes、
+mybatis:
+  mapperLocations: classpath:mybatis/mapper/*.xml
+  config: classpath:mybatis/mybatis-config.xml
+  typeAliasesPackage: com.store.model
+server:
+  port: 80

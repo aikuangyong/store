@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>用户新建</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+
+    </style>
+</head>
+
+<body>
+<div class="admin-main">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="system-user.html">后台用户管理<span class="layui-box">&gt;</span></a><a><cite>添加用户</cite></a></span></p>
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="text" name="name" required lay-verify="name" autocomplete="off" placeholder="请输入姓名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="radio" name="sex" value="男" title="男">
+                <input type="radio" name="sex" value="女" title="女" checked>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <select name="interest" lay-filter="">
+                    <option value=""></option>
+                    <option value="0">管理员</option>
+                    <option value="1" selected="">超级管理员</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">编号</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="tel" name="" required lay-verify="" autocomplete="off" placeholder="请输入编号" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号码</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="tel" name="" required lay-verify="" autocomplete="off" placeholder="请输入手机号码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="tel" name="" required lay-verify="" autocomplete="off" placeholder="请输入详细住址" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">所属派出所</label>
+                <div class="layui-input-inline" style="width: 160px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="0">陕西省</option>
+                        <option value="1" selected="">安徽省</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 160px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="0">西安市</option>
+                        <option value="1" selected="">安康市</option>
+                        <option value="2">商洛市</option>
+                        <option value="3">咸阳市</option>
+                        <option value="4">宝鸡市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 160px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="0">雁塔分局</option>
+                        <option value="1" selected="">碑林分局</option>
+                        <option value="2">莲湖分局</option>
+                        <option value="3">咸阳市</option>
+                        <option value="4">宝鸡市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline"  style="width: 160px;">
+                    <select name="interest" lay-filter="">
+                        <option value=""></option>
+                        <option value="0">雁塔分局</option>
+                        <option value="1" selected="">碑林分局</option>
+                        <option value="2">莲湖分局</option>
+                        <option value="3">咸阳市</option>
+                        <option value="4">宝鸡市</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="layui-form-item" style="margin-top: 30px;">
+            <div class="layui-input-block">
+                <div>
+                    <button class="layui-btn" lay-submit="" lay-filter="branch">确定</button>
+                    <a  href="system-user.html" class="layui-btn layui-btn-primary">返回</a>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'laydate'], function() {
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            police: function(value) {
+                if(value.length < 4) {
+                    return '标题至少得4个字符啊';
+                }
+            },
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

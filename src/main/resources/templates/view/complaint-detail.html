@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+    </style>
+</head>
+
+<body>
+<div style="margin: 15px;">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="complaint.html">投诉管理<span class="layui-box">&gt;</span></a><a><cite>详情</cite></a></span>
+        <a class="layui-btn  btn-handle"  style="float: right;">处理</a>
+
+    </p>
+
+    <fieldset class="layui-elem-field">
+        <legend>投诉详情</legend>
+        <div class="layui-field-box">
+            <p>投诉人：李云新</p>
+            <p>联系电话：13652655487</p>
+            <p>投诉时间：2016-12-12 13:00:01</p>
+            <p>所属派出所：陕西省西安市莲湖区桃园路派出所</p>
+            <p>投诉意见：投诉意见意见</p>
+        </div>
+    </fieldset>
+    <fieldset class="layui-elem-field" style="margin-top: 60px;">
+        <legend>处理意见</legend>
+        <div class="layui-field-box">
+            <p>处理人：李云新</p>
+            <p>处理时间：2016-12-12 13:00:01</p>
+            <p>所属派出所：陕西省西安市莲湖区桃园路派出所</p>
+            <p>投诉意见：投诉意见意见</p>
+        </div>
+    </fieldset>
+
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.use(['form','layer'], function() {
+        var $ = layui.jquery;
+        var form = layui.form(),
+                layer = layui.layer;
+
+
+
+        //自定义验证规则
+        form.verify({
+            title: function(value) {
+                if(value.length < 4) {
+                    return '标题至少得4个字符啊';
+                }
+            },
+            pass: [/(.+){6,12}$/, '密码必须6到12位'],
+            content: function(value) {
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+
+        //处理投诉
+        $(".btn-handle").on('click',function(){
+            layer.open({
+                type: 2,
+                title: '处理投诉',
+                fix: false,
+                maxmin: true,
+                shadeClose: true,
+                area: ['600px', '250px'],
+                content: 'complaint-handle.html',
+                end: function(){
+                    //layer.tips('Hi', '#about', {tips: 1})
+                }
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

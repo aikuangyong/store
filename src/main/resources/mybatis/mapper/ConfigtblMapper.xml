@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ConfigtblMapper">
+    <resultMap id="configtblMap" type="com.store.model.ConfigtblModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="comments" property="comments" javaType="String" />
+                    <result column="datatype" property="datatype" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+    </resultMap>
+
+    <select id="getList" parameterType="configtblModel" resultType="configtblModel">
+		SELECT
+            id,
+            comments,
+            datatype,
+            createtime
+		FROM
+            Configtbl tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="comments != '' and comments != null ">
+                and comments = #{comments}
+            </if>
+            <if test="datatype != '' and datatype != null ">
+                and datatype = #{datatype}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="configtblModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Configtbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="comments != '' and comments != null ">
+                and comments = #{comments}
+            </if>
+            <if test="datatype != '' and datatype != null ">
+                and datatype = #{datatype}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="configtblModel" >
+        update Configtbl tbl
+        set id = id
+            <if test="comments != '' and comments != null ">
+                ,comments =#{comments}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where dataType = #{datatype}
+    </update>
+
+    <update id="disableOrEnable" parameterType="configtblModel">
+        update Configtbl set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="configtblModel">
+        delete FROM  Configtbl where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="configtblModel">
+        insert into Configtbl
+        (
+            comments,
+            datatype,
+            createtime
+        )
+        values
+        (
+            #{comments},
+            #{datatype},
+            #{createtime}
+        )
+    </insert>
+</mapper>

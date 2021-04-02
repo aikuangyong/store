@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.VegetabletypeMapper">
+    <resultMap id="vegetabletypeMap" type="com.store.model.VegetabletypeModel">
+                    <id column="vtid" property="vtid" javaType="String" />
+                    <result column="vtname" property="vtname" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="orderseq" property="orderseq" javaType="Integer" />
+                    <result column="bannerimg" property="bannerimg" javaType="String" />
+                    <result column="typeimg" property="typeimg" javaType="String" />
+                    <result column="bannersrc" property="bannersrc" javaType="String" />
+                    <result column="typesrc" property="typesrc" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="vegetabletypeModel" resultType="vegetabletypeModel">
+		SELECT
+            vtid,
+            vtname,
+            createtime,
+            orderseq,
+            bannerimg,
+            typeimg,
+            CONCAT(HREF_CNF.HREF,banner_tbl.src) as bannersrc,
+            CONCAT(HREF_CNF.HREF,type_tbl.src ) as typesrc
+		FROM
+            Vegetabletype tbl
+        LEFT JOIN (SELECT src ,imgid from imageinfo ) type_tbl on type_tbl.imgid = tbl.typeimg
+        LEFT JOIN (SELECT src ,imgid from imageinfo ) banner_tbl on banner_tbl.imgid = tbl.bannerimg
+        INNER JOIN ONDOMAIN HREF_CNF ON 1 = 1 AND HREF_CNF.TYPE = 'product'
+        where 1=1
+            <if test="vtid != '' and vtid != null ">
+                and vtid = #{vtid}
+            </if>
+            <if test="vtname != '' and vtname != null ">
+                and vtname = #{vtname}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                and orderseq = #{orderseq}
+            </if>
+            <if test="bannerimg != '' and bannerimg != null ">
+                and bannerimg = #{bannerimg}
+            </if>
+            <if test="typeimg != '' and typeimg != null ">
+                and typeimg = #{typeimg}
+            </if>
+        order by orderseq asc
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="vegetabletypeModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Vegetabletype
+        where 1=1
+            <if test="vtid != '' and vtid != null ">
+                and vtid = #{vtid}
+            </if>
+            <if test="vtname != '' and vtname != null ">
+                and vtname = #{vtname}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                and orderseq = #{orderseq}
+            </if>
+            <if test="bannerimg != '' and bannerimg != null ">
+                and bannerimg = #{bannerimg}
+            </if>
+            <if test="typeimg != '' and typeimg != null ">
+                and typeimg = #{typeimg}
+            </if>
+    </select>
+
+    <update id="update" parameterType="vegetabletypeModel" >
+        update Vegetabletype tbl
+        set vtid = vtid
+            <if test="vtname != '' and vtname != null ">
+                ,vtname =#{vtname}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+            <if test="orderseq != '' and orderseq != null ">
+                ,orderseq =#{orderseq}
+            </if>
+            <if test="bannerimg != '' and bannerimg != null ">
+                ,bannerimg =#{bannerimg}
+            </if>
+            <if test="typeimg != '' and typeimg != null ">
+                ,typeimg =#{typeimg}
+            </if>
+        where vtid = #{vtid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="vegetabletypeModel">
+        update Vegetabletype set valid = ${valid} where vtid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="vegetabletypeModel">
+        delete FROM  Vegetabletype where
+        vtid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="vtid" parameterType="vegetabletypeModel">
+        <selectKey  keyProperty="vtid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Vegetabletype
+        (
+                    vtid,
+                    vtname,
+                    createtime,
+                    orderseq,
+                    bannerimg,
+                    typeimg
+        )
+        values
+        (
+                    #{vtid},
+                    #{vtname},
+                    #{createtime},
+                    #{orderseq},
+                    #{bannerimg},
+                    #{typeimg}
+        )
+    </insert>
+</mapper>

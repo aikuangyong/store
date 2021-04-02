@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SysadminMapper">
+    <resultMap id="sysadminMap" type="com.store.model.SysadminModel">
+        <id column="ADMINID" property="adminid" javaType="String" />
+        <result column="USERNAME" property="username" javaType="Long" />
+        <result column="ROLE" property="role" javaType="String" />
+        <result column="STORE" property="store" javaType="String" />
+        <result column="REGISTERTIME" property="registertime" javaType="Date" />
+        <result column="VALID" property="valid" javaType="String" />
+        <result column="LOGINNO" property="loginno" javaType="String" />
+        <result column="PASSWORD" property="password" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="sysadminModel" resultType="sysadminModel">
+        SELECT
+        ADMINID,
+        USERNAME,
+        ROLE,
+        STORE,
+        tbl.REGISTERTIME,
+        tbl.VALID,
+        LOGINNO,
+        PASSWORD,
+        store.storename,
+        sysrole.rolename
+        FROM
+        Sysadmin tbl
+        LEFT JOIN store ON store.storeid = tbl.store
+        LEFT JOIN sysrole ON sysrole.roleid = tbl.role
+        where 1=1
+        <if test="adminid != '' and adminid != null ">
+            and ADMINID = #{adminid}
+        </if>
+        <if test="username != '' and username != null ">
+            and USERNAME = #{username}
+        </if>
+        <if test="password != '' and password != null ">
+            and PASSWORD = #{password}
+        </if>
+        <if test="loginno != '' and loginno != null ">
+            and LOGINNO = #{loginno}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and tbl.VALID = #{valid}
+        </if>
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="sysadminModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Sysadmin
+        where 1=1
+        <if test="adminid != '' and adminid != null ">
+            and ADMINID = #{adminid}
+        </if>
+        <if test="username != '' and username != null ">
+            and USERNAME = #{username}
+        </if>
+        <if test="password != '' and password != null ">
+            and PASSWORD = #{password}
+        </if>
+        <if test="loginno != '' and loginno != null ">
+            and LOGINNO = #{loginno}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and VALID = #{valid}
+        </if>
+    </select>
+
+    <update id="update" parameterType="sysadminModel" >
+        update Sysadmin tbl
+        set ADMINID=adminid
+        <if test="username != '' and username != null ">
+            ,USERNAME =#{username}
+        </if>
+        <if test="password != '' and password != null ">
+            ,PASSWORD =#{password}
+        </if>
+        <if test="loginno != '' and loginno != null ">
+            ,LOGINNO =#{loginno}
+        </if>
+        <if test="valid != '' and valid != null ">
+            ,VALID =#{valid}
+        </if>
+        where adminid = #{adminid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="sysadminModel">
+        update Sysadmin set valid = ${valid} where ADMINID
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="sysadminModel">
+        delete FROM  Sysadmin where
+        ADMINID in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="ADMINID" parameterType="sysadminModel">
+        insert into Sysadmin
+        (
+                    ADMINID,
+                    USERNAME,
+                    ROLE,
+                    STORE,
+                    REGISTERTIME,
+                    VALID,
+                    LOGINNO,
+                    PASSWORD
+        )
+        values
+        (
+                    #{adminid},
+                    #{username},
+                    #{role},
+                    #{store},
+                    #{registertime},
+                    #{valid},
+                    #{loginno},
+                    #{password}
+        )
+    </insert>
+</mapper>

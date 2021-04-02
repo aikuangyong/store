@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.AfterserviceMapper">
+    <resultMap id="afterserviceMap" type="com.store.model.AfterserviceModel">
+        <id column="serviceid" property="serviceid" javaType="String"/>
+        <result column="userid" property="userid" javaType="String"/>
+        <result column="reason" property="reason" javaType="String"/>
+        <result column="applytime" property="applytime" javaType="Date"/>
+        <result column="phoneno" property="phoneno" javaType="String"/>
+        <result column="status" property="status" javaType="String"/>
+        <result column="backpaystatus" property="backpaystatus" javaType="String"/>
+        <result column="orderno" property="orderno" javaType="String"/>
+        <result column="detailid" property="detailid" javaType="String"/>
+        <result column="backpayno" property="backpayno" javaType="String"/>
+        <result column="content" property="content" javaType="String"/>
+        <result column="imggrp" property="imggrp" javaType="String"/>
+        <result column="nickname" property="nickname" javaType="String"/>
+    </resultMap>
+
+
+    <select id="getAppList" parameterType="afterserviceModel" resultType="afterserviceModel">
+        SELECT
+        main_tbl.applytime,
+        tbl_order.createtime AS tradetime,
+        main_tbl.backpayno,
+        tbl_detail.imagesrc AS vegetableimg,
+        tbl_detail.`producecontent` AS vegetablecontent,
+        tbl_detail.vegetablename,
+        main_tbl.`status`,
+        main_tbl.`backpaystatus`,
+        main_tbl.`backpayno`,
+        CASE WHEN main_tbl.status = '1'
+        THEN '审核中'
+        WHEN main_tbl.STATUS = '2' AND main_tbl.backpaystatus = '1'
+        THEN '审核通过,未退款'
+        WHEN main_tbl.STATUS = '2' AND main_tbl.backpaystatus = '2'
+        THEN '退款成功'
+        WHEN main_tbl.STATUS = '3'
+        THEN '审核未通过'
+        END AS orderstatus
+        FROM afterservice main_tbl
+        INNER JOIN orderinfo tbl_order ON  main_tbl.`orderno` = tbl_order.`orderno`
+        INNER JOIN orderdetail tbl_detail ON main_tbl.`detailid` = tbl_detail.`detailid`
+        where main_tbl.userid = #{userid}
+    </select>
+
+    <select id="getList" parameterType="afterserviceModel" resultType="afterserviceModel">
+        SELECT
+        serviceid,
+        userid,
+        reason,
+        applytime,
+        user_tbl.phoneno,
+        status,
+        backpaystatus,
+        orderno,
+        detailid,
+        backpayno,
+        content,
+        imggrp,
+        user_tbl.nickname
+        FROM
+        Afterservice tbl
+        INNER JOIN (select uid ,nickname,phoneno from customer) user_tbl on tbl.userid = user_tbl.uid
+        where 1=1 AND orderno IN (SELECT orderno FROM orderinfo)
+        <if test="nickname != '' and nickname != null ">
+            and user_tbl.nickname like  concat('%',#{nickname},'%')
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and user_tbl.phoneno like  concat('%',#{phoneno},'%')
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="backpaystatus != '' and backpaystatus != null ">
+            and backpaystatus = #{backpaystatus}
+        </if>
+        <if test="backpayno != '' and backpayno != null ">
+            and backpayno = #{backpayno}
+        </if>
+        <if test="beginapplytime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.applytime) >= UNIX_TIMESTAMP(#{beginapplytime}) ]]>
+        </if>
+        <if test="endapplytime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.applytime) <= UNIX_TIMESTAMP(#{endapplytime}) ]]>
+        </if>
+
+        <if test="serviceid != '' and serviceid != null ">
+            and serviceid = #{serviceid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="reason != '' and reason != null ">
+            and reason = #{reason}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="detailid != '' and detailid != null ">
+            and detailid = #{detailid}
+        </if>
+        order by applytime desc
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="afterserviceModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Afterservice tbl
+        INNER JOIN (select uid ,nickname,phoneno from customer) user_tbl on tbl.userid = user_tbl.uid
+        where 1=1 and orderno IN (SELECT orderno FROM orderinfo)
+        <if test="nickname != '' and nickname != null ">
+            and user_tbl.nickname like  concat('%',#{nickname},'%')
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            and user_tbl.phoneno like  concat('%',#{phoneno},'%')
+        </if>
+        <if test="status != '' and status != null ">
+            and status = #{status}
+        </if>
+        <if test="backpaystatus != '' and backpaystatus != null ">
+            and backpaystatus = #{backpaystatus}
+        </if>
+        <if test="backpayno != '' and backpayno != null ">
+            and backpayno = #{backpayno}
+        </if>
+        <if test="beginapplytime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.applytime) >= UNIX_TIMESTAMP(#{beginapplytime}) ]]>
+        </if>
+        <if test="endapplytime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.applytime) <= UNIX_TIMESTAMP(#{endapplytime}) ]]>
+        </if>
+
+        <if test="serviceid != '' and serviceid != null ">
+            and serviceid = #{serviceid}
+        </if>
+        <if test="userid != '' and userid != null ">
+            and userid = #{userid}
+        </if>
+        <if test="reason != '' and reason != null ">
+            and reason = #{reason}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            and orderno = #{orderno}
+        </if>
+        <if test="detailid != '' and detailid != null ">
+            and detailid = #{detailid}
+        </if>
+    </select>
+
+    <update id="update" parameterType="afterserviceModel">
+        update Afterservice tbl
+        set serviceid = serviceid
+        <if test="userid != '' and userid != null ">
+            ,userid =#{userid}
+        </if>
+        <if test="reason != '' and reason != null ">
+            ,reason =#{reason}
+        </if>
+        <if test="applytime != '' and applytime != null ">
+            ,applytime =#{applytime}
+        </if>
+        <if test="phoneno != '' and phoneno != null ">
+            ,phoneno =#{phoneno}
+        </if>
+        <if test="status != '' and status != null ">
+            ,status =#{status}
+        </if>
+        <if test="backpaystatus != '' and backpaystatus != null ">
+            ,backpaystatus =#{backpaystatus}
+        </if>
+        <if test="orderno != '' and orderno != null ">
+            ,orderno =#{orderno}
+        </if>
+        <if test="detailid != '' and detailid != null ">
+            ,detailid =#{detailid}
+        </if>
+        <if test="backpayno != '' and backpayno != null ">
+            ,backpayno =#{backpayno}
+        </if>
+        <if test="content != '' and content != null ">
+            ,content =#{content}
+        </if>
+        <if test="imggrp != '' and imggrp != null ">
+            ,imggrp =#{imggrp}
+        </if>
+        <if test="nickname != '' and nickname != null ">
+            ,nickname =#{nickname}
+        </if>
+        where serviceid = #{serviceid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="afterserviceModel">
+        update Afterservice set valid = ${valid} where serviceid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="afterserviceModel">
+        delete FROM Afterservice where
+        serviceid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="serviceid" parameterType="afterserviceModel">
+        <selectKey keyProperty="serviceid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Afterservice
+        (
+        serviceid,
+        userid,
+        reason,
+        applytime,
+        phoneno,
+        status,
+        backpaystatus,
+        orderno,
+        detailid,
+        backpayno,
+        content,
+        imggrp,
+        nickname
+        )
+        values
+        (
+        #{serviceid},
+        #{userid},
+        #{reason},
+        #{applytime},
+        #{phoneno},
+        #{status},
+        #{backpaystatus},
+        #{orderno},
+        #{detailid},
+        #{backpayno},
+        #{content},
+        #{imggrp},
+        #{nickname}
+        )
+    </insert>
+</mapper>

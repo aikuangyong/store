@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>交易记录</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="admin-main">
+
+    <!-- <p class="page-tab"><span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;"><a href="">首页<span class="layui-box">&gt;</span></a><a><cite>用户列表</cite></a></span></p>-->
+    <div class="handle-box">
+        <form class="layui-form">
+            <ul>
+                <li class="handle-item layui-clear">
+                    <div class="layui-form-item" style="float: left;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">分类：</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">分类1</option>
+                                    <option value="1" selected="">分类2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">是否领取奖品：</label>
+                            <div class="layui-input-inline" style="width: 60px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">是</option>
+                                    <option value="1" selected="">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">派出所：</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">陕西省</option>
+                                    <option value="1" selected="">安徽省</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value="" ></option>
+                                    <option value="0" selected="">全部</option>
+                                    <option value="0">西安市</option>
+                                    <option value="1" >安康市</option>
+                                    <option value="2">商洛市</option>
+                                    <option value="3">咸阳市</option>
+                                    <option value="4">宝鸡市</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 130px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="" selected="">全部</option>
+                                    <option value="0">雁塔分局</option>
+                                    <option value="1">碑林分局</option>
+                                    <option value="2">莲湖分局</option>
+                                    <option value="3">咸阳市</option>
+                                    <option value="4">宝鸡市</option>
+                                </select>
+                            </div>
+                            <div class="layui-input-inline"  style="width: 130px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="" selected="">全部</option>
+                                    <option value="0">曲江派出所</option>
+                                    <option value="1">锦业路派出所</option>
+                                    <option value="2">雁翔路派出所</option>
+                                    <option value="3">唐延路派出所</option>
+                                    <option value="4">文一路派出所</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+
+                        <button class="layui-btn mgl-20" >查询</button>
+
+                    </div>
+                </li>
+
+            </ul>
+        </form>
+    </div>
+
+
+    <table class="site-table table-hover">
+        <thead>
+        <tr>
+            <th>图片</th>
+            <th>名称</th>
+            <th>分类</th>
+            <th>价格</th>
+            <th>购买人</th>
+            <th>身份证号</th>
+            <th>所在派出所</th>
+            <th>购买时间</th>
+            <th>到期时间</th>
+            <th>验证码</th>
+            <th>是否领取奖品</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="width: 80px;"><img src="images/0.jpg" style="width: 80px; height: 80px;"></td>
+            <td>充值套餐</td>
+            <td>分类1</td>
+            <td>999.99</td>
+            <td>李联讯</td>
+            <td>612452265458754785</td>
+            <td>陕西省西安市雁塔分局曲江派出所</td>
+            <td>2016-12-12</td>
+            <td>2017-8-12</td>
+            <td>YHKUJI</td>
+            <td class="receive-state">否</td>
+            <td style="width: 120px;">
+                <a href="" class="layui-btn layui-btn-normal layui-btn-mini">查看</a>
+                <a class="layui-btn layui-btn-mini btn-receive" >保单上传</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 120px;"><img src="images/0.jpg" style="width: 80px; height: 80px;"></td>
+            <td>充值套餐</td>
+            <td>分类1</td>
+            <td>999.99</td>
+            <td>李联讯</td>
+            <td>612452265458754785</td>
+            <td>陕西省西安市雁塔分局曲江派出所</td>
+            <td>2016-12-12</td>
+            <td>2017-8-12</td>
+            <td>YHKUJI</td>
+            <td>否</td>
+            <td>
+                <a href="" class="layui-btn layui-btn-normal layui-btn-mini">查看</a>
+                <a  class="layui-btn layui-btn-mini btn-receive">保单上传</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="admin-table-page">
+        <div id="page" class="page">
+        </div>
+    </div>
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+        /*layer = parent.layer === undefined ? layui.layer : parent.layer;*/
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+/*
+        //领取奖品
+        $(".btn-receive").on('click',function(){
+            layer.confirm('您确定奖品已领取？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.msg('领取成功', {icon: 1});
+                alert( $(".receive-state").html())
+                $(this).parents('tr').find(".receive-state").html("是")
+            }, function(){
+                layer.msg('领取失败', {
+                    time: 2000, //20s后自动关闭
+                });
+            });
+        });*/
+
+
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

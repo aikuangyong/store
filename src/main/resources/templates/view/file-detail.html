@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>上传文件</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+        .file-detail{margin:30px 60px;}
+        .file-detail p{ line-height: 30px;}
+        .file-pic img{ padding: 10px;}
+    </style>
+</head>
+
+<body>
+<div class="admin-main">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="file.html">附件管理<span class="layui-box">&gt;</span></a><a><cite>查看附件</cite></a></span></p>
+    <div class="file-detail" style="">
+        <p>所属派出所：陕西省西安市莲湖区桃园路派出所</p>
+        <p>备注：备注信息</p>
+        <p>上传人：李晓媛</p>
+        <p>所属客户：韩云[6124301698587570485]</p>
+        <div class="file-pic" style="margin-top: 10px;">查看附件
+           <div style="width: 60%; border: 1px solid #dddddd; margin-top: 10px; ">
+               <img src="images/0.jpg" width="130px">
+               <img src="images/0.jpg" width="130px">
+           </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="js/diyUpload/css/webuploader.css">
+<link rel="stylesheet" type="text/css" href="js/diyUpload/css/diyUpload.css">
+<script type="text/javascript" src="js/diyUpload/js/webuploader.html5only.min.js"></script>
+<script type="text/javascript" src="js/diyUpload/js/diyUpload.js"></script>
+<script>
+    layui.use(['form', 'laydate','element'], function() {
+        var form = layui.form(),
+                layer = layui.layer,
+                laydate = layui.laydate;
+        var element = layui.element;
+
+
+        //自定义验证规则
+        form.verify({
+            title: function(value) {
+                if(value.length < 4) {
+                    return '标题至少得4个字符啊';
+                }
+            },
+            pass: [/(.+){6,12}$/, '密码必须6到12位'],
+            content: function(value) {
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+
+
+    //上传文件
+    $('#as').diyUpload({
+        url:'server/fileupload.php',
+        success:function( data ) {
+            console.info( data );
+        },
+        error:function( err ) {
+            console.info( err );
+        },
+        buttonText : '选择文件',
+        chunked:true,
+        // 分片大小
+        chunkSize:512 * 1024,
+        //最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
+        fileNumLimit:50,
+        fileSizeLimit:500000 * 1024,
+        fileSingleSizeLimit:50000 * 1024,
+        accept: {}
+    });
+
+
+</script>
+</body>
+
+</html>

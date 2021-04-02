@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.UsertokenMapper">
+    <resultMap id="usertokenMap" type="com.store.model.UsertokenModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="userid" property="userid" javaType="String" />
+                    <result column="logintime" property="logintime" javaType="Long" />
+                    <result column="token" property="token" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+    </resultMap>
+
+    <select id="getList" parameterType="usertokenModel" resultType="usertokenModel">
+		SELECT
+                    id,
+                    userid,
+                    logintime,
+                    token,
+                    createtime
+		FROM
+            Usertoken tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="logintime != '' and logintime != null ">
+                and logintime = #{logintime}
+            </if>
+            <if test="token != '' and token != null ">
+                and token = #{token}
+            </if>
+            <if test="createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="usertokenModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Usertoken
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="userid != '' and userid != null ">
+                and userid = #{userid}
+            </if>
+            <if test="logintime != '' and logintime != null ">
+                and logintime = #{logintime}
+            </if>
+            <if test="token != '' and token != null ">
+                and token = #{token}
+            </if>
+            <if test="createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="usertokenModel" >
+        update Usertoken tbl
+        set id = id
+            <if test="userid != '' and userid != null ">
+                ,userid =#{userid}
+            </if>
+            <if test="logintime != '' and logintime != null ">
+                ,logintime =#{logintime}
+            </if>
+            <if test="token != '' and token != null ">
+                ,token =#{token}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="usertokenModel">
+        update Usertoken set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="usertokenModel">
+        delete FROM  Usertoken where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="usertokenModel">
+        insert into Usertoken
+        (
+                    userid,
+                    logintime,
+                    token,
+                    createtime
+        )
+        values
+        (
+                    #{userid},
+                    #{logintime},
+                    #{token},
+                    #{createtime}
+        )
+    </insert>
+</mapper>

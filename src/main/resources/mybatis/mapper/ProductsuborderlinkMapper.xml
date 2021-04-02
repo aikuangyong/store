@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.ProductsuborderlinkMapper">
+    <resultMap id="productsuborderlinkMap" type="com.store.model.ProductsuborderlinkModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="vid" property="vid" javaType="String" />
+                    <result column="suborderid" property="suborderid" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+    </resultMap>
+
+    <select id="getList" parameterType="productsuborderlinkModel" resultType="productsuborderlinkModel">
+		SELECT
+                    id,
+                    vid,
+                    suborderid,
+                    createtime
+		FROM
+            Productsuborderlink tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="vid != '' and vid != null ">
+                and vid = #{vid}
+            </if>
+            <if test="suborderid != '' and suborderid != null ">
+                and suborderid = #{suborderid}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="productsuborderlinkModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Productsuborderlink
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="vid != '' and vid != null ">
+                and vid = #{vid}
+            </if>
+            <if test="suborderid != '' and suborderid != null ">
+                and suborderid = #{suborderid}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+    </select>
+
+    <update id="update" parameterType="productsuborderlinkModel" >
+        update Productsuborderlink tbl
+        set id = id
+            <if test="vid != '' and vid != null ">
+                ,vid =#{vid}
+            </if>
+            <if test="suborderid != '' and suborderid != null ">
+                ,suborderid =#{suborderid}
+            </if>
+            <if test="createtime != null ">
+                ,createtime =#{createtime}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="productsuborderlinkModel">
+        update Productsuborderlink set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="productsuborderlinkModel">
+        delete FROM  Productsuborderlink where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="productsuborderlinkModel">
+        insert into Productsuborderlink
+        (
+            vid,
+            suborderid,
+            createtime
+        )
+        values
+        (
+            #{vid},
+            #{suborderid},
+            #{createtime}
+        )
+    </insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="productsuborderlinkModel">
+        insert into Productsuborderlink
+        (
+            vid,
+            suborderid,
+            createtime
+        )
+        values
+        <foreach collection="list" item="reddemCode" index="index" separator="," >
+        (
+            #{reddemCode.vid},
+            #{reddemCode.suborderid},
+            #{reddemCode.createtime}
+        )
+        </foreach>
+    </insert>
+</mapper>

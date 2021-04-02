@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.StoreMapper">
+    <resultMap id="storeMap" type="com.store.model.StoreModel">
+                    <id column="storeid" property="storeid" javaType="String" />
+                    <result column="storeno" property="storeno" javaType="String" />
+                    <result column="poseno" property="poseno" javaType="String" />
+                    <result column="storeaddress" property="storeaddress" javaType="String" />
+                    <result column="storephone" property="storephone" javaType="String" />
+                    <result column="storename" property="storename" javaType="String" />
+                    <result column="lat" property="lat" javaType="String" />
+                    <result column="lng" property="lng" javaType="String" />
+                    <result column="createtime" property="createtime" javaType="Date" />
+                    <result column="valid" property="valid" javaType="Integer" />
+    </resultMap>
+
+    <select id="getList" parameterType="storeModel" resultType="storeModel">
+		SELECT
+            storeid,
+            storeno,
+            poseno,
+            storeaddress,
+            storephone,
+            storename,
+            createtime,
+            valid,
+            lat,
+            lng
+		FROM
+            Store tbl
+        where 1=1
+            <if test="storeid != '' and storeid != null ">
+                and storeid = #{storeid}
+            </if>
+            <if test="storeno != '' and storeno != null ">
+                and storeno = #{storeno}
+            </if>
+            <if test="poseno != '' and poseno != null ">
+                and poseno = #{poseno}
+            </if>
+            <if test="storeaddress != '' and storeaddress != null ">
+                and storeaddress = #{storeaddress}
+            </if>
+            <if test="storephone != '' and storephone != null ">
+                and storephone = #{storephone}
+            </if>
+            <if test="storename != '' and storename != null ">
+                and storename = #{storename}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="valid != '' and valid != null ">
+                and valid = #{valid}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="storeModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Store
+        where 1=1
+            <if test="storeid != '' and storeid != null ">
+                and storeid = #{storeid}
+            </if>
+            <if test="storeno != '' and storeno != null ">
+                and storeno = #{storeno}
+            </if>
+            <if test="poseno != '' and poseno != null ">
+                and poseno = #{poseno}
+            </if>
+            <if test="storeaddress != '' and storeaddress != null ">
+                and storeaddress = #{storeaddress}
+            </if>
+            <if test="storephone != '' and storephone != null ">
+                and storephone = #{storephone}
+            </if>
+            <if test="storename != '' and storename != null ">
+                and storename = #{storename}
+            </if>
+            <if test=" createtime != null ">
+                and createtime = #{createtime}
+            </if>
+            <if test="valid != '' and valid != null ">
+                and valid = #{valid}
+            </if>
+    </select>
+
+    <update id="update" parameterType="storeModel" >
+        update Store tbl
+        set storeid = storeid
+            <if test="storeno != '' and storeno != null ">
+                ,storeno =#{storeno}
+            </if>
+            <if test="poseno != '' and poseno != null ">
+                ,poseno =#{poseno}
+            </if>
+            <if test="storeaddress != '' and storeaddress != null ">
+                ,storeaddress =#{storeaddress}
+            </if>
+            <if test="storephone != '' and storephone != null ">
+                ,storephone =#{storephone}
+            </if>
+            <if test="storename != '' and storename != null ">
+                ,storename =#{storename}
+            </if>
+            <if test=" createtime != null ">
+                ,createtime = #{createtime}
+            </if>
+            <if test="lat != '' and lat != null ">
+                ,lat = #{lat}
+            </if>
+            <if test="lng != '' and lng != null ">
+                ,lng = #{lng}
+            </if>
+            <if test="valid != '' and valid != null ">
+                ,valid = #{valid}
+            </if>
+        where storeid = #{storeid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="storeModel">
+        update Store set valid = ${valid} where storeid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="storeModel">
+        delete FROM  Store where
+        storeid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="storeid" parameterType="storeModel">
+        <selectKey  keyProperty="storeid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Store
+        (
+                    storeid,
+                    storeno,
+                    poseno,
+                    storeaddress,
+                    storephone,
+                    storename,
+                    createtime,
+                    valid,
+                    lat,
+                    lng
+        )
+        values
+        (
+                    #{storeid},
+                    #{storeno},
+                    #{poseno},
+                    #{storeaddress},
+                    #{storephone},
+                    #{storename},
+                    #{createtime},
+                    #{valid},
+                    #{lat},
+                    #{lng}
+        )
+    </insert>
+</mapper>

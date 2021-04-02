@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.BindinfoMapper">
+    <resultMap id="bindinfoMap" type="com.store.model.BindinfoModel">
+                    <id column="bid" property="bid" javaType="String" />
+                    <result column="thirdid" property="thirdid" javaType="String" />
+                    <result column="phoneno" property="phoneno" javaType="String" />
+                    <result column="bindtype" property="bindtype" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="bindinfoModel" resultType="bindinfoModel">
+		SELECT
+            bid,
+            thirdid,
+            phoneno,
+            bindtype
+		FROM
+            Bindinfo tbl
+        where 1=1
+            <if test="bid != '' and bid != null ">
+                and bid = #{bid}
+            </if>
+            <if test="thirdid != '' and thirdid != null ">
+                and thirdid = #{thirdid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="bindtype != '' and bindtype != null ">
+                and bindtype = #{bindtype}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="bindinfoModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Bindinfo
+        where 1=1
+            <if test="bid != '' and bid != null ">
+                and bid = #{bid}
+            </if>
+            <if test="thirdid != '' and thirdid != null ">
+                and thirdid = #{thirdid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                and phoneno = #{phoneno}
+            </if>
+            <if test="bindtype != '' and bindtype != null ">
+                and bindtype = #{bindtype}
+            </if>
+    </select>
+
+    <update id="update" parameterType="bindinfoModel" >
+        update Bindinfo tbl
+        set bid = bid
+            <if test="thirdid != '' and thirdid != null ">
+                ,thirdid =#{thirdid}
+            </if>
+            <if test="phoneno != '' and phoneno != null ">
+                ,phoneno =#{phoneno}
+            </if>
+            <if test="bindtype != '' and bindtype != null ">
+                ,bindtype =#{bindtype}
+            </if>
+        where bid = #{bid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="bindinfoModel">
+        update Bindinfo set valid = ${valid} where bid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="bindinfoModel">
+        delete FROM  Bindinfo where
+        bid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="bid" parameterType="bindinfoModel">
+        <selectKey  keyProperty="bid" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Bindinfo
+        (
+                    bid,
+                    thirdid,
+                    phoneno,
+                    bindtype
+        )
+        values
+        (
+                    #{bid},
+                    #{thirdid},
+                    #{phoneno},
+                    #{bindtype}
+        )
+    </insert>
+</mapper>

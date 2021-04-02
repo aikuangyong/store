@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.VegetableMapper">
+    <resultMap id="vegetableMap" type="com.store.model.VegetableModel">
+        <id column="vid" property="vid" javaType="String"/>
+        <result column="vegetablename" property="vegetablename" javaType="String"/>
+        <result column="posno" property="posno" javaType="String"/>
+        <result column="typeid" property="typeid" javaType="String"/>
+        <result column="orderseq" property="orderseq" javaType="Integer"/>
+        <result column="content" property="content" javaType="String"/>
+        <result column="vegetableimg" property="vegetableimg" javaType="String"/>
+        <result column="detailcontent" property="detailcontent" javaType="String"/>
+        <result column="price" property="price" javaType="String"/>
+        <result column="createtime" property="createtime" javaType="Date"/>
+        <result column="valid" property="valid" javaType="String"/>
+        <result column="salecount" property="salecount" javaType="Integer"/>
+        <result column="isIndex" property="isIndex" javaType="String"/>
+        <result column="thumimg" property="thumimg" javaType="String"/>
+    </resultMap>
+
+    <select id="getDataById" parameterType="vegetableModel" resultType="vegetableModel">
+        SELECT
+        vid,
+        vegetablename,
+        posno,
+        skuno,
+        typeid,
+        vtname typename,
+        tbl.orderseq,
+        content,
+        vegetableimg,
+        detailcontent,
+        price,
+        tbl.createtime,
+        tbl.valid,
+        isIndex,
+        case when vLinkId is null  then 0 else 1 end as isregular ,
+        CASE WHEN detail_order.salecount IS NULL THEN 0 ELSE detail_order.salecount END AS salecount
+        FROM
+        Vegetable tbl
+        INNER JOIN VEGETABLETYPE TYPE_TBL on tbl.typeid = TYPE_TBL.vtid
+        LEFT JOIN (SELECT vegetable vLinkId FROM Vegetablelink GROUP BY vegetable ) linkTbl ON linkTbl.vLinkId = tbl.vid
+        LEFT JOIN (SELECT vegetable,SUM(salecount) salecount FROM orderdetail GROUP BY vegetable) detail_order
+        ON detail_order.vegetable = tbl.vid
+        where 1=1
+        <if test="idList != null and idList.size() != 0 ">
+            and vid in
+            <foreach collection="idList" item="primaryKey" index="no" open="("
+                     separator="," close=")">
+                #{primaryKey}
+            </foreach>
+        </if>
+        <if test="vid != '' and vid != null ">
+            and vid = #{vid}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename = #{vegetablename}
+        </if>
+        <if test="posno != '' and posno != null ">
+            and posno = #{posno}
+        </if>
+        <if test="typeid != '' and typeid != null ">
+            and typeid = #{typeid}
+        </if>
+        <if test="orderseq != '' and orderseq != null ">
+            and orderseq = #{orderseq}
+        </if>
+        <if test="content != '' and content != null ">
+            and content = #{content}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            and vegetableimg = #{vegetableimg}
+        </if>
+        <if test="detailcontent != '' and detailcontent != null ">
+            and detailcontent = #{detailcontent}
+        </if>
+        <if test="price != '' and price != null ">
+            and price = #{price}
+        </if>
+        <if test=" createtime != null ">
+            and tbl.createtime = #{createtime}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and valid = #{valid}
+        </if>
+        order by tbl.orderseq asc
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getListByTypeTop" parameterType="vegetableModel" resultType="vegetableModel">
+        SELECT
+        vid,vegetablename,posno,DATA_TBL.typeid,content,vegetableimg,price,DATA_TBL.createtime,
+        case when vLinkId is null  then 0 else 1 end as isregular ,
+        valid,isIndex,DATA_TBL.orderseq,TYPE_TBL.vtname
+        FROM (
+        SELECT
+        TBL.vid,
+        tbl.vegetablename,
+        tbl.posno,
+        tbl.typeid,
+        tbl.orderseq,
+        tbl.content,
+        tbl.vegetableimg,
+        tbl.price,
+        tbl.createtime,
+        tbl.valid,
+        tbl.isIndex
+        FROM vegetable TBL
+        LEFT JOIN vegetable L_TBL ON TBL.typeid = L_TBL.typeid AND TBL.vegetableimg &lt; L_TBL.vegetableimg
+        GROUP BY TBL.vid,TBL.vegetablename,TBL.typeid,TBL.vegetableimg
+        HAVING COUNT(L_TBL.vid) &lt; 6
+        ) AS DATA_TBL
+        LEFT JOIN (SELECT vegetable vLinkId FROM Vegetablelink GROUP BY vegetable ) linkTbl ON linkTbl.vLinkId = DATA_TBL.vid
+        INNER JOIN VEGETABLETYPE TYPE_TBL ON DATA_TBL.typeid = TYPE_TBL.vtid
+        <if test="vid != '' and vid != null ">
+            and vid = #{vid}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename = #{vegetablename}
+        </if>
+        <if test="posno != '' and posno != null ">
+            and posno = #{posno}
+        </if>
+        <if test="typeid != '' and typeid != null ">
+            and typeid = #{typeid}
+        </if>
+        <if test="orderseq != '' and orderseq != null ">
+            and orderseq = #{orderseq}
+        </if>
+        <if test="content != '' and content != null ">
+            and content = #{content}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            and vegetableimg = #{vegetableimg}
+        </if>
+        <if test="detailcontent != '' and detailcontent != null ">
+            and detailcontent = #{detailcontent}
+        </if>
+        <if test="price != '' and price != null ">
+            and price = #{price}
+        </if>
+        <if test=" createtime != null ">
+            and tbl.createtime = #{createtime}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and valid = #{valid}
+        </if>
+        order by DATA_TBL.orderseq asc
+    </select>
+
+    <select id="getList" parameterType="vegetableModel" resultType="vegetableModel">
+        SELECT
+        vid,
+        vegetablename,
+        posno,
+        case when vLinkId is null  then 0 else 1 end as isregular ,
+        typeid,
+        vtname typename,
+        tbl.orderseq,
+        content,
+        vegetableimg,
+        price,
+        tbl.createtime,
+        tbl.valid,
+        isIndex,
+        THUM_IMG.imghref thumimg
+        FROM
+        Vegetable tbl
+        INNER JOIN VEGETABLETYPE TYPE_TBL ON tbl.typeid = TYPE_TBL.vtid
+        LEFT JOIN (SELECT vegetable vLinkId FROM Vegetablelink GROUP BY vegetable ) linkTbl ON linkTbl.vLinkId = tbl.vid
+        LEFT JOIN v_thum_img THUM_IMG ON THUM_IMG.imggrp = tbl.vegetableimg
+        where 1=1
+        <if test="idList != null">
+            and vid in
+            <foreach collection="idList" item="primaryKey" index="no" open="("
+                     separator="," close=")">
+                #{primaryKey}
+            </foreach>
+        </if>
+        <if test="begincreatetime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.createtime) >= UNIX_TIMESTAMP(#{begincreatetime}) ]]>
+        </if>
+        <if test="endcreatetime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.createtime) <= UNIX_TIMESTAMP(#{endcreatetime}) ]]>
+        </if>
+        <if test="vid != '' and vid != null ">
+            and vid = #{vid}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename like CONCAT('%',#{vegetablename},'%')
+        </if>
+        <if test="posno != '' and posno != null ">
+            and posno like CONCAT('%',#{posno},'%')
+        </if>
+        <if test="typeid != '' and typeid != null ">
+            and typeid = #{typeid}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            and vegetableimg = #{vegetableimg}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and valid = #{valid}
+        </if>
+        order by tbl.createtime desc
+        limit ${pageNow},${pageSize}
+    </select>
+
+    <select id="getCount" parameterType="vegetableModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Vegetable tbl
+        INNER JOIN VEGETABLETYPE TYPE_TBL ON tbl.typeid = TYPE_TBL.vtid
+        LEFT JOIN v_thum_img THUM_IMG ON THUM_IMG.imggrp = tbl.vegetableimg
+        where 1=1
+        <if test="idList != null">
+            and vid in
+            <foreach collection="idList" item="primaryKey" index="no" open="("
+                     separator="," close=")">
+                #{primaryKey}
+            </foreach>
+        </if>
+        <if test="begincreatetime != null ">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.createtime) >= UNIX_TIMESTAMP(#{begincreatetime}) ]]>
+        </if>
+        <if test="endcreatetime != null">
+            <![CDATA[ and UNIX_TIMESTAMP(tbl.createtime) <= UNIX_TIMESTAMP(#{endcreatetime}) ]]>
+        </if>
+        <if test="vid != '' and vid != null ">
+            and vid = #{vid}
+        </if>
+        <if test="vegetablename != '' and vegetablename != null ">
+            and vegetablename like CONCAT('%',#{vegetablename},'%')
+        </if>
+        <if test="posno != '' and posno != null ">
+            and posno like CONCAT('%',#{posno},'%')
+        </if>
+        <if test="typeid != '' and typeid != null ">
+            and typeid = #{typeid}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            and vegetableimg = #{vegetableimg}
+        </if>
+        <if test="valid != '' and valid != null ">
+            and valid = #{valid}
+        </if>
+    </select>
+
+    <update id="update" parameterType="vegetableModel">
+        update Vegetable tbl
+        set vid = vid
+        <if test="vegetablename != '' and vegetablename != null ">
+            ,vegetablename =#{vegetablename}
+        </if>
+        <if test="posno != '' and posno != null ">
+            ,posno =#{posno}
+        </if>
+        <if test="skuno != '' and skuno != null ">
+            ,skuno =#{skuno}
+        </if>
+        <if test="typeid != '' and typeid != null ">
+            ,typeid =#{typeid}
+        </if>
+        <if test="orderseq != '' and orderseq != null ">
+            ,orderseq =#{orderseq}
+        </if>
+        <if test="content != '' and content != null ">
+            ,content =#{content}
+        </if>
+        <if test="vegetableimg != '' and vegetableimg != null ">
+            ,vegetableimg =#{vegetableimg}
+        </if>
+        <if test="detailcontent != '' and detailcontent != null ">
+            ,detailcontent =#{detailcontent}
+        </if>
+        <if test="price != '' and price != null ">
+            ,price =#{price}
+        </if>
+        <if test=" createtime != null ">
+            ,createtime =#{createtime}
+        </if>
+        <if test="valid != '' and valid != null ">
+            ,valid =#{valid}
+        </if>
+        <if test="isIndex != '' and isIndex != null ">
+            ,isIndex =#{isIndex}
+        </if>
+        where vid = #{vid}
+    </update>
+
+    <update id="disableOrEnable" parameterType="vegetableModel">
+        update Vegetable set valid = ${valid} where vid
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="vegetableModel">
+        delete FROM Vegetable where
+        vid in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="vid" parameterType="vegetableModel">
+        <selectKey keyProperty="vid" resultType="java.lang.String" order="BEFORE">
+            select MD5(uuid())
+        </selectKey>
+        insert into Vegetable
+        (
+        vid,
+        vegetablename,
+        posno,
+        skuno,
+        typeid,
+        orderseq,
+        content,
+        vegetableimg,
+        detailcontent,
+        price,
+        createtime,
+        valid,
+        isIndex
+        )
+        values
+        (
+        #{vid},
+        #{vegetablename},
+        #{posno},
+        #{skuno},
+        #{typeid},
+        #{orderseq},
+        #{content},
+        #{vegetableimg},
+        #{detailcontent},
+        #{price},
+        #{createtime},
+        #{valid},
+        #{isIndex}
+        )
+    </insert>
+</mapper>

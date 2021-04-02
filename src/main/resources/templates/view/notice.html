@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>公告管理</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="admin-main">
+
+    <!-- <p class="page-tab"><span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;"><a href="">首页<span class="layui-box">&gt;</span></a><a><cite>用户列表</cite></a></span></p>-->
+    <div class="handle-box">
+        <form class="layui-form">
+            <ul>
+                <li class="handle-item layui-clear">
+                    <div class="layui-form-item" style="float: left;">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">公告标题：</label>
+                            <div class="layui-input-inline" style="width: 200px;">
+                               <input type="text" class="layui-input" placeholder="公告标题">
+                            </div>
+                        </div>
+
+                        <button class="layui-btn mgl-20" >查询</button>
+                    </div>
+                      <span class="fr" style="float: right;">
+                        <a href="noticenew.html"  class="layui-btn btn-add btn-default "><i class="layui-icon">&#xe608;</i>新建公告</a>
+                    </span>
+                </li>
+
+            </ul>
+        </form>
+    </div>
+
+
+    <table class="site-table table-hover">
+        <thead>
+        <tr>
+            <th>公告标题</th>
+            <th>创建人</th>
+            <th>创建时间</th>
+            <th>发布人</th>
+            <th>发布时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>关于电动自行车备案新规定公告</td>
+            <td>李四</td>
+            <td>2016-12-28 08:30:15</td>
+            <td>发布人</td>
+            <td>2016-12-30 08:10:04</td>
+            <td>未发布</td>
+            <td >
+                <a  class="layui-btn layui-btn-danger layui-btn-mini btn-release">发布</a>
+                <a  class="layui-btn layui-btn-normal layui-btn-mini">查看</a>
+                <a class="layui-btn layui-btn-mini btn-del" >删除</a>
+            </td>
+        </tr>
+        <tr>
+            <td>关于电动自行车备案新规定公告</td>
+            <td>李四</td>
+            <td>2016-12-28 08:30:15</td>
+            <td>发布人</td>
+            <td>2016-12-30 08:10:04</td>
+            <td>未发布</td>
+            <td>
+                <a  class="layui-btn layui-btn-danger layui-btn-mini btn-release">发布</a>
+                <a  class="layui-btn layui-btn-normal layui-btn-mini">查看</a>
+                <a class="layui-btn layui-btn-mini btn-del" >删除</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="admin-table-page">
+        <div id="page" class="page">
+        </div>
+    </div>
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+        /*layer = parent.layer === undefined ? layui.layer : parent.layer;*/
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+
+        //审核转账
+        $(".btn-release").on('click',function(){
+            layer.confirm('确定发布此条公告', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.msg('发布成功', {icon: 1});
+            }, function(){
+
+            });
+        });
+
+        //表格选择
+        $('.site-table tbody tr').on('click', function(event) {
+            var $this = $(this);
+            var $input = $this.children('td').eq(0).find('input');
+            $input.on('ifChecked', function(e) {
+                $this.css('background-color', '#EEEEEE');
+            });
+            $input.on('ifUnchecked', function(e) {
+                $this.removeAttr('style');
+            });
+            $input.iCheck('toggle');
+        }).find('input').each(function() {
+            var $this = $(this);
+            $this.on('ifChecked', function(e) {
+                $this.parents('tr').css('background-color', '#EEEEEE');
+            });
+            $this.on('ifUnchecked', function(e) {
+                $this.parents('tr').removeAttr('style');
+            });
+        });
+        //全选
+        $('#selected-all').on('ifChanged', function(event) {
+            var $input = $('.site-table tbody tr td').find('input');
+            $input.iCheck(event.currentTarget.checked ? 'check' : 'uncheck');
+        });
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            /* layer.alert(JSON.stringify(data.field), {
+             title: '最终的提交信息'
+             })*/
+            layer.msg('已提交审核，请耐心等待', {icon: 1});
+            return false;
+        });
+    });
+
+
+</script>
+
+</body>
+
+</html>

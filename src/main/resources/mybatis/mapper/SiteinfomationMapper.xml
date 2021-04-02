@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.SiteinfomationMapper">
+    <resultMap id="siteinfomationMap" type="com.store.model.SiteinfomationModel">
+                    <id column="id" property="id" javaType="String" />
+                    <result column="infoname" property="infoname" javaType="String" />
+                    <result column="infocontent" property="infocontent" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="siteinfomationModel" resultType="siteinfomationModel">
+		SELECT
+                    id,
+                    infoname,
+                    infocontent
+		FROM
+            Siteinfomation tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="infoname != '' and infoname != null ">
+                and infoname = #{infoname}
+            </if>
+            <if test="infocontent != '' and infocontent != null ">
+                and infocontent = #{infocontent}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="siteinfomationModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Siteinfomation
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="infoname != '' and infoname != null ">
+                and infoname = #{infoname}
+            </if>
+            <if test="infocontent != '' and infocontent != null ">
+                and infocontent = #{infocontent}
+            </if>
+    </select>
+
+    <update id="update" parameterType="siteinfomationModel" >
+        update Siteinfomation tbl
+        set id = id
+            <if test="infoname != '' and infoname != null ">
+                ,infoname =#{infoname}
+            </if>
+            <if test="infocontent != '' and infocontent != null ">
+                ,infocontent =#{infocontent}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="siteinfomationModel">
+        update Siteinfomation set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="siteinfomationModel">
+        delete FROM  Siteinfomation where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="siteinfomationModel">
+        <selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Siteinfomation
+        (
+                    id,
+                    infoname,
+                    infocontent
+        )
+        values
+        (
+                    #{id},
+                    #{infoname},
+                    #{infocontent}
+        )
+    </insert>
+</mapper>

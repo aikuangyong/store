@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>新建角色</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <style>
+        .page-tab{ margin-bottom: 10px; padding: 10px;}
+       .layui-form-checkbox {
+            position: relative;
+            height: 20px;
+            line-height: 19px;
+        }
+        .layui-form-checkbox span {
+            padding: 0 5px;
+            font-size: 12px;
+        }
+         .layui-form-checkbox i {
+
+            width: 30px;
+            font-size: 14px;
+        }
+        .layui-table td, .layui-table th {
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="admin-main">
+    <p class="page-tab">
+       <span class="layui-breadcrumb" lay-separator="&gt;" style="visibility: visible;">
+           <a href="system-role.html">角色管理<span class="layui-box">&gt;</span></a><a><cite>新建角色</cite></a></span></p>
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称：</label>
+            <div class="layui-input-block" style="width: 60%;">
+                <input type="text" name="projectname" required lay-verify="name" autocomplete="off" placeholder="请输入角色名称" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色权限</label>
+            <div class="layui-input-block" style="width: 90%;" >
+                <table class="layui-table site-table table-hover">
+                    <thead>
+                    <tr>
+                        <th>模块名称</th>
+                        <th>可见范围</th>
+                        <th>操作项</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>分局管理</td>
+                        <td style="width: 510px;">
+                            <div class="layui-inline">
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="0">陕西省</option>
+                                        <option value="1" selected="">安徽省</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 100px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value="" ></option>
+                                        <option value="0" selected="">全部</option>
+                                        <option value="0">西安市</option>
+                                        <option value="1" >安康市</option>
+                                        <option value="2">商洛市</option>
+                                        <option value="3">咸阳市</option>
+                                        <option value="4">宝鸡市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 130px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="" selected="">全部</option>
+                                        <option value="0">雁塔分局</option>
+                                        <option value="1">碑林分局</option>
+                                        <option value="2">莲湖分局</option>
+                                        <option value="3">咸阳市</option>
+                                        <option value="4">宝鸡市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 130px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="" selected="">全部</option>
+                                        <option value="0">曲江派出所</option>
+                                        <option value="1">锦业路派出所</option>
+                                        <option value="2">雁翔路派出所</option>
+                                        <option value="3">唐延路派出所</option>
+                                        <option value="4">文一路派出所</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td >
+                            <input type="checkbox" name="like[write]" title="新增">
+                            <input type="checkbox" name="like[read]" title="查看" checked>
+                            <input type="checkbox" name="like[dai]" title="修改">
+                            <input type="checkbox" name="like[dai]" title="删除">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>派出所管理</td>
+                        <td>
+                            <div class="layui-inline">
+                                <div class="layui-input-inline" style="width: 100px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="0">陕西省</option>
+                                        <option value="1" selected="">安徽省</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 100px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value="" ></option>
+                                        <option value="0" selected="">全部</option>
+                                        <option value="0">西安市</option>
+                                        <option value="1">安康市</option>
+                                        <option value="2">商洛市</option>
+                                        <option value="3">咸阳市</option>
+                                        <option value="4">宝鸡市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 130px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="" selected="">全部</option>
+                                        <option value="0">雁塔分局</option>
+                                        <option value="1">碑林分局</option>
+                                        <option value="2">莲湖分局</option>
+                                        <option value="3">咸阳市</option>
+                                        <option value="4">宝鸡市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline"  style="width: 130px;">
+                                    <select name="interest" lay-filter="">
+                                        <option value=""></option>
+                                        <option value="" selected="">全部</option>
+                                        <option value="0">曲江派出所</option>
+                                        <option value="1">锦业路派出所</option>
+                                        <option value="2">雁翔路派出所</option>
+                                        <option value="3">唐延路派出所</option>
+                                        <option value="4">文一路派出所</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td >
+                            <input type="checkbox" name="like[write]" title="新增">
+                            <input type="checkbox" name="like[read]" title="查看" checked>
+                            <input type="checkbox" name="like[dai]" title="修改">
+                            <input type="checkbox" name="like[dai]" title="删除">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item" style="margin-top: 30px;">
+            <div class="layui-input-block">
+                <div>
+                    <button class="layui-btn" lay-submit="" lay-filter="branch">确定</button>
+                    <a  href="system-role.html" class="layui-btn layui-btn-primary">返回</a>
+                </div>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'laydate','layedit'], function() {
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+        //自定义验证规则
+        form.verify({
+            police: function(value) {
+                if(value.length < 4) {
+                    return '标题至少得4个字符啊';
+                }
+            },
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+    });
+</script>
+</body>
+
+</html>

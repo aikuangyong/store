@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.store.dao.AreasMapper">
+    <resultMap id="areasMap" type="com.store.model.AreasModel">
+                    <id column="id" property="id" javaType="Integer" />
+                    <result column="areaid" property="areaid" javaType="String" />
+                    <result column="area" property="area" javaType="String" />
+                    <result column="cityid" property="cityid" javaType="String" />
+    </resultMap>
+
+    <select id="getList" parameterType="areasModel" resultType="areasModel">
+		SELECT
+                    id,
+                    areaid,
+                    area,
+                    cityid
+		FROM
+            Areas tbl
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="areaid != '' and areaid != null ">
+                and areaid = #{areaid}
+            </if>
+            <if test="area != '' and area != null ">
+                and area = #{area}
+            </if>
+            <if test="cityid != '' and cityid != null ">
+                and cityid = #{cityid}
+            </if>
+        limit ${pageNow},${pageSize}
+	</select>
+    
+    <select id="getCount" parameterType="areasModel" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM Areas
+        where 1=1
+            <if test="id != '' and id != null ">
+                and id = #{id}
+            </if>
+            <if test="areaid != '' and areaid != null ">
+                and areaid = #{areaid}
+            </if>
+            <if test="area != '' and area != null ">
+                and area = #{area}
+            </if>
+            <if test="cityid != '' and cityid != null ">
+                and cityid = #{cityid}
+            </if>
+    </select>
+
+    <update id="update" parameterType="areasModel" >
+        update Areas tbl
+        set id = id
+            <if test="areaid != '' and areaid != null ">
+                ,areaid =#{areaid}
+            </if>
+            <if test="area != '' and area != null ">
+                ,area =#{area}
+            </if>
+            <if test="cityid != '' and cityid != null ">
+                ,cityid =#{cityid}
+            </if>
+        where id = #{id}
+    </update>
+
+    <update id="disableOrEnable" parameterType="areasModel">
+        update Areas set valid = ${valid} where id
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </update>
+
+    <delete id="delete" parameterType="areasModel">
+        delete FROM  Areas where
+        id in
+        <foreach collection="idList" item="primaryKey" index="no" open="("
+                 separator="," close=")">
+            #{primaryKey}
+        </foreach>
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="areasModel">
+        <selectKey  keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            select uuid()
+        </selectKey>
+        insert into Areas
+        (
+                    id,
+                    areaid,
+                    area,
+                    cityid
+        )
+        values
+        (
+                    #{id},
+                    #{areaid},
+                    #{area},
+                    #{cityid}
+        )
+    </insert>
+</mapper>

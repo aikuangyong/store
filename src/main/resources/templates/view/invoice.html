@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>发票管理</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/global.css" media="all">
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/table.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+<div class="admin-main">
+    <div class="handle-box">
+        <form class="layui-form">
+            <ul>
+
+                <li class="handle-item layui-clear">
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">时间</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="" placeholder="开始时间" autocomplete="off" class="layui-input"  id="LAY_demorange_s">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">发票类型</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">纸质发票</option>
+                                    <option value="1" selected="">电子发票</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">开票性质</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <select name="interest" lay-filter="">
+                                    <option value=""></option>
+                                    <option value="0">个人</option>
+                                    <option value="1" selected="">单位</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: auto;">开票人</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="" placeholder="" autocomplete="off" class="layui-input"  >
+                            </div>
+                        </div>
+
+
+                        <button class="layui-btn mgl-20" >查询</button>
+
+                    </div>
+                </li>
+
+            </ul>
+        </form>
+    </div>
+
+
+    <table class="site-table table-hover">
+        <thead>
+        <tr>
+            <th>发票类型</th>
+            <th>申请开票人</th>
+            <th>开票性质</th>
+            <th>开票单位</th>
+            <th>开票金额</th>
+            <th>时间</th>
+            <th>状态</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>纸质发票</td>
+            <td>韩晓云</td>
+            <td>单位</td>
+            <td>营运集团</td>
+            <td>1152.00</td>
+            <td>2016-12-12</td>
+            <td>未开票</td>
+            <td>234</td>
+            <td>
+                <a href="invoice-detail.html" class="layui-btn layui-btn-mini">开票</a>
+            </td>
+        </tr>
+        <tr>
+            <td>电子发票</td>
+            <td>韩晓云</td>
+            <td>单位</td>
+            <td>营运集团</td>
+            <td>1152.00</td>
+            <td>2016-12-12</td>
+            <td>已开票</td>
+            <td>234</td>
+            <td>
+                <a href="invoice-detail.html" class="layui-btn layui-btn-mini">开票</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <div class="admin-table-page">
+        <div id="page" class="page">
+        </div>
+    </div>
+
+</div>
+<!-- <script type="text/javascript" src="js/layer.js"></script>-->
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['icheck', 'laypage','layer','form', 'laydate'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+                layer = layui.layer;
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green'
+        });
+
+        //分页操作
+        laypage({
+            cont: 'page',
+            pages: 25, //总页数
+            groups: 5, //连续显示分页数
+            jump: function(obj, first) {
+                //得到了当前页，用于向服务端请求对应数据
+                var curr = obj.curr;
+                if(!first) {
+                    //layer.msg('第 '+ obj.curr +' 页');
+                }
+            }
+        });
+
+
+        //列表选择
+        $('.site-table tbody tr').on('click', function(event) {
+            var $this = $(this);
+            var $input = $this.children('td').eq(0).find('input');
+            $input.on('ifChecked', function(e) {
+                $this.css('background-color', '#EEEEEE');
+            });
+            $input.on('ifUnchecked', function(e) {
+                $this.removeAttr('style');
+            });
+            $input.iCheck('toggle');
+        }).find('input').each(function() {
+            var $this = $(this);
+            $this.on('ifChecked', function(e) {
+                $this.parents('tr').css('background-color', '#EEEEEE');
+            });
+            $this.on('ifUnchecked', function(e) {
+                $this.parents('tr').removeAttr('style');
+            });
+        });
+        //全选
+        $('#selected-all').on('ifChanged', function(event) {
+            var $input = $('.site-table tbody tr td').find('input');
+            $input.iCheck(event.currentTarget.checked ? 'check' : 'uncheck');
+        });
+
+
+        //日期选择
+        var laydate = layui.laydate;
+
+        var start = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                end.min = datas; //开始日选好后，重置结束日的最小日期
+                end.start = datas //将结束日的初始值设定为开始日
+            }
+        };
+
+        var end = {
+            min: laydate.now()
+            ,max: '2099-06-16 23:59:59'
+            ,istoday: false
+            ,choose: function(datas){
+                start.max = datas; //结束日选好后，重置开始日的最大日期
+            }
+        };
+
+        document.getElementById('LAY_demorange_s').onclick = function(){
+            start.elem = this;
+            laydate(start);
+        };
+        document.getElementById('LAY_demorange_e').onclick = function(){
+            end.elem = this
+            laydate(end);
+        };
+
+        //搜索区域
+        var form = layui.form(),
+                layer = layui.layer,
+                layedit = layui.layedit,
+                laydate = layui.laydate;
+        //自定义验证规则
+        form.verify({
+            /* police: function(value) {
+             if(value.length < 4) {
+             return '标题至少得4个字符啊';
+             }
+             },
+             pass: [/(.+){6,12}$/, '密码必须6到12位'],
+             content: function(value) {
+             layedit.sync(editIndex);
+             }*/
+        });
+
+        //监听提交
+        form.on('submit(branch)', function(data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        });
+
+    });
+
+
+</script>
+
+</body>
+
+</html>
